@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <boost/tokenizer.hpp>
+#include <vector>
+
 
 using namespace std;
 using namespace boost;
@@ -9,15 +11,15 @@ class Connectors
 {
     private:
         string a[100];
-        bool donext;
+        bool state = 1;
     public:
         void setbool(bool b)
         {
-            donext = b;
+            state = b;
         }
         bool getbool()
         {
-            return donext;
+            return state;
         }
         bool run(string arr[], bool k) == 0;  
 };
@@ -25,7 +27,7 @@ class Connectors
 class Semicolon
 {
     public:
-    bool run(string arr[], bool k)
+    void run(string arr[])
     {
 
     }
@@ -34,7 +36,7 @@ class Semicolon
 class And
 {
     public:
-    bool run(string arr[], bool k)
+    void run(string arr[])
     {
 
     }
@@ -43,8 +45,8 @@ class And
 
 class Or
 {
-     public:
-    bool run(string arr[], bool k)
+    public:
+    void run(string arr[])
     {
 
     }
