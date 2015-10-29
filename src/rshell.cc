@@ -10,13 +10,8 @@ using namespace boost;
 class Connectors
 {
     private:
-        string a[100];
         bool state;
     public:
-        Connectors()
-        {
-            state = 1;
-        }
         void setbool(bool b)
         {
             state = b;
@@ -25,32 +20,63 @@ class Connectors
         {
             return state;
         }
-        virtual bool run(string arr[], bool k) = 0;  
+        virtual void  run(string arr[]) = 0;  
 };
 
-class Semicolon
+class Semicolon : public Connectors
 {
+    private:
+         const char *arr[100];
     public:
-    void run(string arr[])
+    Semicolon(vector<string> v)
+    {
+        setbool(1);
+        for (unsigned i = 0; i < v.size(); ++i)
+        {
+            arr[i] = v.at(i).c_str();    
+        }   
+    }
+    virtual void run(string arr[])
     {
 
     }
 };
 
-class And
+class And : public Connectors
 {
+    private:
+        const char *arr[100];
     public:
-    void run(string arr[])
+    And(vector<string> v)
+    {
+        setbool(1);
+        for (unsigned i = 0; i < v.size(); ++i)
+        {
+            arr[i] = v.at(i).c_str();    
+        }   
+    }
+    virtual void run(string arr[])
     {
 
     }
 
 };
 
-class Or
+class Or : public Connectors
 {
+    private:
+        const char *arr[100];
     public:
-    void run(string arr[])
+    Or(vector<string> v)
+    {
+        setbool(1);
+        for (unsigned i = 0; i < v.size(); ++i)
+        {
+            arr[i] = v.at(i).c_str();    
+        }   
+    }
+
+    virtual void run(string arr[])
     {
 
     }
@@ -109,27 +135,23 @@ int main()
         
         if (q.front() == ";")
         {
-            Semicolon s = new Semicolon(current);
-            objects.push_back(s);
+            objects.push_back(new Semicolon(current));
         }
 
         if (q.front() == "||")
         {
-            Or o = new Or(current);
-            objects.push_back(o);
+            objects.push_back(new Or(current));
         }
         
         if (q.front() == "&&")
         {
-            And a = new And(current);
-            objects.push_back(a);
+            objects.push_back(new And(current));
         }
 
         q.pop();
         current.clear();
     }
 
-    
 
 
 }
