@@ -3,6 +3,9 @@
 #include <boost/tokenizer.hpp>
 #include <vector>
 #include <queue>
+#include <stdio.h>
+#include <cstring>
+#include <sys/wait.h>
 
 using namespace std;
 using namespace boost;
@@ -20,25 +23,58 @@ class Connectors
         {
             return state;
         }
-        virtual void  run(string arr[]) = 0;  
+        virtual void  run() = 0;  
 };
 
 class Semicolon : public Connectors
 {
     private:
-         const char *arr[100];
+        char *arr[100];
     public:
     Semicolon(vector<string> v)
     {
         setbool(1);
+        
         for (unsigned i = 0; i < v.size(); ++i)
         {
-            arr[i] = v.at(i).c_str();    
-        }   
+            string str  = v.at(i);
+            char *cstr = new char[str.length() + 1];
+            strcpy(cstr, str.c_str());
+            arr[i] = cstr;
+            delete[] cstr;            
+        }
+           
     }
-    virtual void run(string arr[])
+    virtual void run()
     {
+        pid_t c_pid, pid;
+        int status;
+        c_pid = fork();
 
+        if (c_pid < 0)
+        {
+            perror("fork failed");
+            setbool(0);
+            return;
+        }
+        else if (c_pid == 0)
+        {
+            execvp(arr[0], arr);
+            perror("execvp failed");
+            setbool(0);
+        }
+        else 
+        {
+            if ((pid = wait(&status)) < 0)
+            {
+                perror("wait");
+                setbool(0);
+                return;
+            }
+        }
+
+        setbool(1);
+        return;
     }
 };
 
@@ -55,7 +91,7 @@ class And : public Connectors
             arr[i] = v.at(i).c_str();    
         }   
     }
-    virtual void run(string arr[])
+    virtual void run()
     {
 
     }
@@ -76,7 +112,7 @@ class Or : public Connectors
         }   
     }
 
-    virtual void run(string arr[])
+    virtual void run()
     {
 
     }
@@ -152,7 +188,8 @@ int main()
     //{
         //cout << "NULL" << endl;
     //}
-    
+   
+    bool first = 1; 
     vector<string> current;
 
     for (unsigned i = 0; i < v.size(); ++i)
@@ -178,10 +215,21 @@ int main()
                 objects.push_back(new And(current));
             }
             q.pop();
+        }
+        if (first == 1)
+        {
+            objects.push_back(new Semicolon(current));
+            first = 0;
         }   
         current.clear();
     }
-    cout << current.size() << endl;
+    
+    cout << objects.size()  << endl;
+    for (unsigned i = 0; i < objects.size(); ++i)
+    {
+        objects.at(i)->run();
+    }
+
 
 
 }
