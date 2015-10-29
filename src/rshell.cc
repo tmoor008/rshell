@@ -94,10 +94,10 @@ int main()
 
     //containers we'll use for storage
     vector< vector<string> > v;
+    vector<string> t;
     vector<Connectors*> objects;
     queue<string> q;        
     
-    bool check = 0;
     int column = 0;
     
     typedef tokenizer<char_separator<char> > tokenizer;
@@ -105,14 +105,16 @@ int main()
     tokenizer tokens(input, sep);    
 
     
+    bool flag = 0;
 
     for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
     {
-        if (*itr == ";" && "||" && "&&")
+        if ((*itr == ";") || (*itr == "||") || (*itr == "&&"))   
         {
             q.push(*itr);
-            v.at(column).push_back(NULL);
-            column = column + 1;                             
+            v.at(column).push_back("\0");
+            column = column + 1; 
+            flag = 0;                            
         }
         else if (*itr == "#")
         {
@@ -120,9 +122,29 @@ int main()
         }
         else
         {
-            v.at(column).push_back(*itr);
+            if (!flag)
+            {
+                v.push_back(t);
+                v.at(column).push_back(*itr);
+                flag = 1;
+            }
+            else
+            {
+                v.at(column).push_back(*itr);
+            }
         }
     }
+
+    v.at(v.size() - 1).push_back("\0");         //adds null to last command
+
+   //for (unsigned i = 0; i < v.size(); ++i)
+    //{
+       //for (unsigned j = 0; j < v.at(i).size(); ++j)
+        //{
+            //cout << v.at(i).at(j) << " ";   
+        //}
+        //cout << endl;
+    //}
 
     vector<string> current;
 
@@ -135,23 +157,32 @@ int main()
         
         if (q.front() == ";")
         {
-            objects.push_back(new Semicolon(current));
+           objects.push_back(new Semicolon(current));
         }
 
         if (q.front() == "||")
         {
-            objects.push_back(new Or(current));
+           objects.push_back(new Or(current));
         }
         
         if (q.front() == "&&")
         {
-            objects.push_back(new And(current));
+           objects.push_back(new And(current));
         }
 
         q.pop();
         current.clear();
     }
 
+//const char *a[3];
+//a[0] = "hello";
+//a[1] = "cat";
+//a[2] = "tree";
+
+//for (unsigned i = 0; i < 2; ++i)
+//{
+  //  cout << a[i] << endl;
+//}
 
 
 }
