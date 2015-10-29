@@ -137,52 +137,51 @@ int main()
 
     v.at(v.size() - 1).push_back("\0");         //adds null to last command
 
-   //for (unsigned i = 0; i < v.size(); ++i)
+    //for (unsigned i = 0; i < v.size(); ++i)
     //{
        //for (unsigned j = 0; j < v.at(i).size(); ++j)
-        //{
-            //cout << v.at(i).at(j) << " ";   
-        //}
-        //cout << endl;
+       //{
+            //cout << v.at(i).at(j);   
+       //}
+        
     //}
 
+    //cout << "Rows: " << v.size() << endl;
+    //cout << "Colums at 1st pos: " << v.at(0).size() << endl;
+    //if (v.at(0).at(v.at(0).size() - 1) == "\0")
+    //{
+        //cout << "NULL" << endl;
+    //}
+    
     vector<string> current;
 
-    for (unsigned i = 0; i < v.at(i).size(); ++i)
+    for (unsigned i = 0; i < v.size(); ++i)
     {
         for (unsigned j = 0; j < v.at(i).at(j).size(); ++j)
         {
             current.push_back(v.at(i).at(j));     
         }
-        
-        if (q.front() == ";")
+        if (!q.empty())
         {
-           objects.push_back(new Semicolon(current));
-        }
+            if (q.front() == ";")
+            {
+                objects.push_back(new Semicolon(current));
+            }
 
-        if (q.front() == "||")
-        {
-           objects.push_back(new Or(current));
-        }
+            if (q.front() == "||")
+            {   
+                objects.push_back(new Or(current));
+            }
         
-        if (q.front() == "&&")
-        {
-           objects.push_back(new And(current));
-        }
-
-        q.pop();
+            if (q.front() == "&&")
+            {
+                objects.push_back(new And(current));
+            }
+            q.pop();
+        }   
         current.clear();
     }
-
-//const char *a[3];
-//a[0] = "hello";
-//a[1] = "cat";
-//a[2] = "tree";
-
-//for (unsigned i = 0; i < 2; ++i)
-//{
-  //  cout << a[i] << endl;
-//}
+    cout << current.size() << endl;
 
 
 }
