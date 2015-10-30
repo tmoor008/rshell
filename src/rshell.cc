@@ -6,25 +6,27 @@
 #include <stdio.h>
 #include <cstring>
 #include <sys/wait.h>
+#include <sys/types.h>
 
 using namespace std;
 using namespace boost;
 
-class Connectors
+//global bool state = 1;     //keeps track of pass/fail of previous command run
+
+class Connectors    //abstract base class so we can dynamically call run
 {
     private:
-        //char *arr[100];
-        bool state;
+        bool bee;
     public:
         void setbool(bool b)
         {
-            state = b;
+            bee = b;
         }
         bool getbool()
         {
-            return state;
+            return bee;
         }
-        virtual void  run() = 0;  
+        virtual bool run(bool state) = 0;  
 };
 
 class Semicolon : public Connectors
@@ -32,153 +34,156 @@ class Semicolon : public Connectors
     private:
        vector<char *> vctr; 
     public:
-    Semicolon(vector<string> v) : vctr(50)
-    {
-        setbool(1);
-        
-        vctr.reserve(v.size());
+    Semicolon(vector<string> v) : vctr(50)  //constructor creates char* vector
+    {                                       //which stores one command+params
+        vctr.reserve(v.size());             //in a semicolon object
         for (unsigned i = 0; i < v.size(); ++i)
         {
             vctr[i] = const_cast<char*>(v[i].c_str());
         }
-        vctr.push_back(NULL);
-    }
-    virtual void run()
+        vctr.push_back(NULL);   //makes sure the command ends with a null char
+    }                           //so execvp can determine the end
+    virtual bool run(bool state)
     {
-        char **pointer = &vctr[0];
+        char **pointer = &vctr[0];  //points to vctr we'll use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
 
-        if (c_pid < 0)
+        if (c_pid < 0)      //checks if fork succeeds
         {
             perror("fork failed");
-            setbool(0);
-            return;
+            state = 0; 
+            return state;
         }
-        else if (c_pid == 0)
+        else if (c_pid == 0)    //if were in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
-            setbool(0);
+            state = 0;
+            cout << "State: " << state << endl;
+            return state;
         }
-        else 
+        else //if in the parent, wait for child to terminate
         {
             if ((pid = wait(&status)) < 0)
             {
                 perror("wait");
-                setbool(0);
-                return;
+                state = 0;
+                return state;
             }
         }
 
-        setbool(1);
-        return;
+        state = 1; //if it succeeded, set the state to true
+        return state;
     }
 };
 
 class And : public Connectors
 {
     private:
-        const char *arr[100];
+       vector<char *> vctr; 
     public:
-    And(vector<string> v)
-    {
-        setbool(1);
+    And(vector<string> v) : vctr(50)
+    {       
+        vctr.reserve(v.size()); //store one command+param of type And
         for (unsigned i = 0; i < v.size(); ++i)
         {
-            arr[i] = v.at(i).c_str();    
-        }   
-    }
-    virtual void run()
-    {
-        if (getbool() == 0)
-        {
-            return;
+            vctr[i] = const_cast<char*>(v[i].c_str());
         }
-
+        vctr.push_back(NULL); //end with null char
+    }
+    virtual bool run(bool state)
+    {
+        cout << "And State: " << state << endl;
+        if (state != 1) //should only run if the previous command succeeded
+        {
+            cout << "Not suppose to run" << endl;
+            return state;
+        }
+        char **pointer = &vctr[0]; //points to vctr we use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
 
-        if (c_pid < 0)
+        if (c_pid < 0)  //check if fork succeeds
         {
             perror("fork failed");
-            setbool(0);
-            return;
+            state = 0; 
+            return state;
         }
-        else if (c_pid == 0)
+        else if (c_pid == 0) //if in the child call execvp
         {
-            //execvp(arr[0], arr);
-            //perror("execvp failed");
-            setbool(0);
-        }
-        else 
-        {
+            status = execvp(pointer[0], pointer);
+            perror("execvp failed");
+            //state = 0;
+            //cout << "State: " << state << endl;
+            if (status == -1)
+            {
+            }
             if ((pid = wait(&status)) < 0)
             {
                 perror("wait");
-                setbool(0);
-                return;
             }
+            state = 0;
+            return state;
         }
 
-        setbool(1);
-        return;
+        state = 1;  //if succeded, set state to truew
+        return state;
     }
-
 };
 
 class Or : public Connectors
 {
     private:
-        const char *arr[100];
+       vector<char *> vctr; 
     public:
-    Or(vector<string> v)
-    {
-        if (getbool() == 1)
-        {
-            return;
-        }
-        setbool(1);
+    Or(vector<string> v) : vctr(50) //stores one command+params of type Or
+    {       
+        vctr.reserve(v.size());
         for (unsigned i = 0; i < v.size(); ++i)
         {
-            arr[i] = v.at(i).c_str();    
-        }   
+            vctr[i] = const_cast<char*>(v[i].c_str());
+        }
+        vctr.push_back(NULL); //end with null
     }
-
-    virtual void run()
+    virtual bool run(bool state)
     {
+        if (state != 0) //should only run if previous command failed
+        {
+             return state;
+        }
+        char **pointer = &vctr[0]; //points to vctr we use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
-
-        if (c_pid < 0)
+        if (c_pid < 0) //checks if fork succeeds
         {
             perror("fork failed");
-            setbool(0);
-            return;
+            state = 0; 
+            return state;
         }
-        else if (c_pid == 0)
+        else if (c_pid == 0) //if in the child, call execvp
         {
-            //execvp(arr[0], arr);
+            execvp(pointer[0], pointer);
             perror("execvp failed");
-            setbool(0);
+            state = 0;
+            return state;
         }
-        else 
+        else //if in the parent, wait for child to terminate 
         {
             if ((pid = wait(&status)) < 0)
             {
                 perror("wait");
-                setbool(0);
-                return;
+                state = 0;
+                return state;
             }
         }
 
-        setbool(1);
-        return;
+        state = 1; //if succeeded, set state to true
+        return state;
     }
-
 };
 
 
@@ -198,43 +203,43 @@ int main()
     
     int column = 0;
     
-    typedef tokenizer<char_separator<char> > tokenizer;
+    //creates tokenizer and char separator to parse input
+    typedef tokenizer<char_separator<char> > tokenizer; 
     char_separator<char> sep(" ", ";");
     tokenizer tokens(input, sep);    
 
     
-    bool flag = 0;
-
+    bool flag = 0; //flag to check when to start a new column
+    
+    //holds commands in a 2d vector
     for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
     {
         if ((*itr == ";") || (*itr == "||") || (*itr == "&&"))   
         {
-            q.push(*itr);
-            //v.at(column).push_back("\0");
+            q.push(*itr); //pushes connecter into queue and increments column
             column = column + 1; 
             flag = 0;                            
         }
         else if (*itr == "#")
         {
-            break;          //if commented, break out of loop
+            break;          //if theres a comment, break out of loop
         }
         else
         {
             if (!flag)
             {
-                v.push_back(t);
+                v.push_back(t); //starts a new column
                 v.at(column).push_back(*itr);
                 flag = 1;
             }
             else
-            {
+            { //push value into position
                 v.at(column).push_back(*itr);
             }
         }
     }
 
-    //v.at(v.size() - 1).push_back("\0");         //adds null to last command
-
+    //checks the contents of v
     //for (unsigned i = 0; i < v.size(); ++i)
     //{
        //for (unsigned j = 0; j < v.at(i).size(); ++j)
@@ -244,13 +249,11 @@ int main()
         
     //}
 
-    //cout << "Rows: " << v.size() << endl;
-    //cout << "Colums at 1st pos: " << v.at(0).size() << endl;
-    //if (v.at(0).at(v.at(0).size() - 1) == "\0")
-    //{
-        //cout << "NULL" << endl;
-    //}
-   
+    //this part of the code creates a temp vector current which holds
+    //a single command+param chunk at a time
+    //then determines the connector previous to the command its told to run
+    //it then creates the corresponding connector class type object
+    //and pushes the new object into a vector of Connectors pointers
     bool first = 1; 
     vector<string> current;
 
@@ -285,13 +288,21 @@ int main()
         }   
         current.clear();
     }
-    
-    //cout << "Size: " << objects.size()  << endl;
-    for (unsigned i = 0; i < objects.size(); ++i)
-    {
-        objects.at(i)->run();
+    bool beg = 1;
+    bool durr = 0;
+    //this loop goes through the object vector and calls run on each 
+    //object, dynamically callig the run of the class type
+    cout << "Size: " << objects.size()  << endl;
+    unsigned i = 0;
+    while (i < objects.size())
+   {
+        cout << "Curr size: " << objects.size() << endl;
+        cout << "I : " << i << endl;
+        durr = objects.at(i)->run(beg);
+        cout << "State after run: " << durr << endl;
+        beg = durr;
+        i = i + 1;
     }
-
 
 
 }
