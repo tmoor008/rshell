@@ -6,11 +6,12 @@
 #include <stdio.h>
 #include <cstring>
 #include <sys/wait.h>
+#include <sys/types.h>
 
 using namespace std;
 using namespace boost;
 
-bool state = 1;     //keeps track of pass/fail of previous command run
+//global bool state = 1;     //keeps track of pass/fail of previous command run
 
 class Connectors    //abstract base class so we can dynamically call run
 {
@@ -25,7 +26,7 @@ class Connectors    //abstract base class so we can dynamically call run
         {
             return bee;
         }
-        virtual void  run() = 0;  
+        virtual bool run(bool state) = 0;  
 };
 
 class Semicolon : public Connectors
@@ -42,7 +43,7 @@ class Semicolon : public Connectors
         }
         vctr.push_back(NULL);   //makes sure the command ends with a null char
     }                           //so execvp can determine the end
-    virtual void run()
+    virtual bool run(bool state)
     {
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
         pid_t c_pid, pid;
@@ -53,14 +54,15 @@ class Semicolon : public Connectors
         {
             perror("fork failed");
             state = 0; 
-            return;
+            return state;
         }
         else if (c_pid == 0)    //if were in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
             state = 0;
-            return;
+            cout << "State: " << state << endl;
+            return state;
         }
         else //if in the parent, wait for child to terminate
         {
@@ -68,12 +70,12 @@ class Semicolon : public Connectors
             {
                 perror("wait");
                 state = 0;
-                return;
+                return state;
             }
         }
 
         state = 1; //if it succeeded, set the state to true
-        return;
+        return state;
     }
 };
 
@@ -91,11 +93,13 @@ class And : public Connectors
         }
         vctr.push_back(NULL); //end with null char
     }
-    virtual void run()
+    virtual bool run(bool state)
     {
+        cout << "And State: " << state << endl;
         if (state != 1) //should only run if the previous command succeeded
         {
-             return;
+            cout << "Not suppose to run" << endl;
+            return state;
         }
         char **pointer = &vctr[0]; //points to vctr we use for execvp
         pid_t c_pid, pid;
@@ -106,27 +110,27 @@ class And : public Connectors
         {
             perror("fork failed");
             state = 0; 
-            return;
+            return state;
         }
         else if (c_pid == 0) //if in the child call execvp
         {
-            execvp(pointer[0], pointer);
+            status = execvp(pointer[0], pointer);
             perror("execvp failed");
-            state = 0;
-            return;
-        }
-        else    //if in the parent wait for child to terminate 
-        {
+            //state = 0;
+            //cout << "State: " << state << endl;
+            if (status == -1)
+            {
+            }
             if ((pid = wait(&status)) < 0)
             {
                 perror("wait");
-                state = 0;
-                return;
             }
+            state = 0;
+            return state;
         }
 
         state = 1;  //if succeded, set state to truew
-        return;
+        return state;
     }
 };
 
@@ -144,29 +148,28 @@ class Or : public Connectors
         }
         vctr.push_back(NULL); //end with null
     }
-    virtual void run()
+    virtual bool run(bool state)
     {
         if (state != 0) //should only run if previous command failed
         {
-             return;
+             return state;
         }
         char **pointer = &vctr[0]; //points to vctr we use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
-
         if (c_pid < 0) //checks if fork succeeds
         {
             perror("fork failed");
             state = 0; 
-            return;
+            return state;
         }
         else if (c_pid == 0) //if in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
             state = 0;
-            return;
+            return state;
         }
         else //if in the parent, wait for child to terminate 
         {
@@ -174,12 +177,12 @@ class Or : public Connectors
             {
                 perror("wait");
                 state = 0;
-                return;
+                return state;
             }
         }
 
         state = 1; //if succeeded, set state to true
-        return;
+        return state;
     }
 };
 
@@ -285,13 +288,20 @@ int main()
         }   
         current.clear();
     }
-    
+    bool beg = 1;
+    bool durr = 0;
     //this loop goes through the object vector and calls run on each 
     //object, dynamically callig the run of the class type
-    //cout << "Size: " << objects.size()  << endl;
-    for (unsigned i = 0; i < objects.size(); ++i)
-    {
-        objects.at(i)->run();
+    cout << "Size: " << objects.size()  << endl;
+    unsigned i = 0;
+    while (i < objects.size())
+   {
+        cout << "Curr size: " << objects.size() << endl;
+        cout << "I : " << i << endl;
+        durr = objects.at(i)->run(beg);
+        cout << "State after run: " << durr << endl;
+        beg = durr;
+        i = i + 1;
     }
 
 
