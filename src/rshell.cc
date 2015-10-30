@@ -11,7 +11,6 @@
 using namespace std;
 using namespace boost;
 
-//global bool state = 1;     //keeps track of pass/fail of previous command run
 
 class Connectors    //abstract base class so we can dynamically call run
 {
@@ -60,22 +59,31 @@ class Semicolon : public Connectors
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
-            state = 0;
-            cout << "State: " << state << endl;
-            return state;
+            exit(127);         
         }
         else //if in the parent, wait for child to terminate
         {
+            //checks if wait fails
             if ((pid = wait(&status)) < 0)
             {
-                perror("wait");
+                perror("wait failed");
+                state = 0;
+                return state;
+            }
+            //checks whether the child succeeded or not
+            //outputs the state accodingly
+            if (status == 0)
+            {
+                state = 1; //if it succeeded, set the state to true
+                return state;
+            }
+            else
+            {
                 state = 0;
                 return state;
             }
         }
-
-        state = 1; //if it succeeded, set the state to true
-        return state;
+        return 0;
     }
 };
 
@@ -95,42 +103,51 @@ class And : public Connectors
     }
     virtual bool run(bool state)
     {
-        cout << "And State: " << state << endl;
-        if (state != 1) //should only run if the previous command succeeded
+        if (state != 1)
         {
-            cout << "Not suppose to run" << endl;
             return state;
-        }
-        char **pointer = &vctr[0]; //points to vctr we use for execvp
+        }    
+    
+        char **pointer = &vctr[0];  //points to vctr we'll use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
 
-        if (c_pid < 0)  //check if fork succeeds
+        if (c_pid < 0)      //checks if fork succeeds
         {
             perror("fork failed");
             state = 0; 
             return state;
         }
-        else if (c_pid == 0) //if in the child call execvp
+        else if (c_pid == 0)    //if were in the child, call execvp
         {
-            status = execvp(pointer[0], pointer);
+            execvp(pointer[0], pointer);
             perror("execvp failed");
-            //state = 0;
-            //cout << "State: " << state << endl;
-            if (status == -1)
-            {
-            }
+            exit(127);         
+        }
+        else //if in the parent, wait for child to terminate
+        {
+            //checks if wait fails
             if ((pid = wait(&status)) < 0)
             {
-                perror("wait");
+                perror("wait failed");
+                state = 0;
+                return state;
             }
-            state = 0;
-            return state;
+            //checks whether the child succeeded or not
+            //outputs the state accodingly
+            if (status == 0)
+            {
+                state = 1; //if it succeeded, set the state to true
+                return state;
+            }
+            else
+            {
+                state = 0;
+                return state;
+            }
         }
-
-        state = 1;  //if succeded, set state to truew
-        return state;
+        return 0;    
     }
 };
 
@@ -150,39 +167,51 @@ class Or : public Connectors
     }
     virtual bool run(bool state)
     {
-        if (state != 0) //should only run if previous command failed
+        if (state != 0)
         {
-             return state;
-        }
-        char **pointer = &vctr[0]; //points to vctr we use for execvp
+            return state;
+        }    
+    
+        char **pointer = &vctr[0];  //points to vctr we'll use for execvp
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
-        if (c_pid < 0) //checks if fork succeeds
+
+        if (c_pid < 0)      //checks if fork succeeds
         {
             perror("fork failed");
             state = 0; 
             return state;
         }
-        else if (c_pid == 0) //if in the child, call execvp
+        else if (c_pid == 0)    //if were in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
-            state = 0;
-            return state;
+            exit(127);         
         }
-        else //if in the parent, wait for child to terminate 
+        else //if in the parent, wait for child to terminate
         {
+            //checks if wait fails
             if ((pid = wait(&status)) < 0)
             {
-                perror("wait");
+                perror("wait failed");
+                state = 0;
+                return state;
+            }
+            //checks whether the child succeeded or not
+            //outputs the state accodingly
+            if (status == 0)
+            {
+                state = 1; //if it succeeded, set the state to true
+                return state;
+            }
+            else
+            {
                 state = 0;
                 return state;
             }
         }
-
-        state = 1; //if succeeded, set state to true
-        return state;
+        return 0; 
     }
 };
 
@@ -288,20 +317,17 @@ int main()
         }   
         current.clear();
     }
-    bool beg = 1;
+    bool beg = 0;
     bool durr = 0;
     //this loop goes through the object vector and calls run on each 
     //object, dynamically callig the run of the class type
-    cout << "Size: " << objects.size()  << endl;
-    unsigned i = 0;
-    while (i < objects.size())
-   {
-        cout << "Curr size: " << objects.size() << endl;
-        cout << "I : " << i << endl;
+    //cout << "Size: " << objects.size()  << endl;
+    for (unsigned i = 0; i < objects.size(); ++i)
+    {
+        //cout << "Curr size: " << objects.size() << endl;
         durr = objects.at(i)->run(beg);
-        cout << "State after run: " << durr << endl;
+        //cout << "State after run: " << durr << endl;
         beg = durr;
-        i = i + 1;
     }
 
 
