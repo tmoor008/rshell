@@ -14,17 +14,7 @@ using namespace boost;
 
 class Connectors    //abstract base class so we can dynamically call run
 {
-    private:
-        bool bee;
     public:
-        void setbool(bool b)
-        {
-            bee = b;
-        }
-        bool getbool()
-        {
-            return bee;
-        }
         virtual bool run(bool state) = 0;  
 };
 
@@ -45,12 +35,14 @@ class Semicolon : public Connectors
     virtual bool run(bool state)
     {
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
+        
         string ex = "exit";
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
         {
             exit(0);
         }
+        
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
@@ -61,7 +53,7 @@ class Semicolon : public Connectors
             state = 0; 
             return state;
         }
-        else if (c_pid == 0)    //if were in the child, call execvp
+        else if (c_pid == 0)    //if we're in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
@@ -77,7 +69,7 @@ class Semicolon : public Connectors
                 return state;
             }
             //checks whether the child succeeded or not
-            //outputs the state accodingly
+            //returns the state accordingly
             if (status == 0)
             {
                 state = 1; //if it succeeded, set the state to true
@@ -109,12 +101,13 @@ class And : public Connectors
     }
     virtual bool run(bool state)
     {
-        if (state != 1)
+        if (state != 1) //return if the previous command failed
         {
             return state;
         }    
     
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
+        
         string ex = "exit";
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
@@ -132,7 +125,7 @@ class And : public Connectors
             state = 0; 
             return state;
         }
-        else if (c_pid == 0)    //if were in the child, call execvp
+        else if (c_pid == 0)    //if we're in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
@@ -148,7 +141,7 @@ class And : public Connectors
                 return state;
             }
             //checks whether the child succeeded or not
-            //outputs the state accodingly
+            //outputs the state accordingly
             if (status == 0)
             {
                 state = 1; //if it succeeded, set the state to true
@@ -180,18 +173,20 @@ class Or : public Connectors
     }
     virtual bool run(bool state)
     {
-        if (state != 0)
+        if (state != 0) //return if the previous command succeeded
         {
             return state;
         }    
         
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
+        
         string ex = "exit";
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
         {
             exit(0);
         }
+        
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
@@ -202,7 +197,7 @@ class Or : public Connectors
             state = 0; 
             return state;
         }
-        else if (c_pid == 0)    //if were in the child, call execvp
+        else if (c_pid == 0)    //if we're in the child, call execvp
         {
             execvp(pointer[0], pointer);
             perror("execvp failed");
@@ -275,7 +270,7 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";");
+        char_separator<char> sep(" ", ";#");
         tokenizer tokens(input, sep);    
 
         
@@ -287,13 +282,13 @@ int main()
         {
             if ((*itr == ";") || (*itr == "||") || (*itr == "&&"))   
             {
-                q.push(*itr); //pushes connecter into queue and increments column
-                column = column + 1; 
+                q.push(*itr); //pushes connector into queue
+                column = column + 1; //increments column
                 flag = 0;                            
             }
             else if (*itr == "#")
             {
-                break;          //if theres a comment, break out of loop
+                break;          //if there's a comment, break out of loop
             }
             else
             {
@@ -362,7 +357,7 @@ int main()
         bool beg = 0;
         bool durr = 0;
         //this loop goes through the object vector and calls run on each 
-        //object, dynamically callig the run of the class type
+        //object, dynamically calling the run of the class type
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
