@@ -14,17 +14,7 @@ using namespace boost;
 
 class Connectors    //abstract base class so we can dynamically call run
 {
-    private:
-        bool bee;
     public:
-        void setbool(bool b)
-        {
-            bee = b;
-        }
-        bool getbool()
-        {
-            return bee;
-        }
         virtual bool run(bool state) = 0;  
 };
 
@@ -280,7 +270,7 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";");
+        char_separator<char> sep(" ", ";#");
         tokenizer tokens(input, sep);    
 
         
