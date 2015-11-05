@@ -31,7 +31,15 @@ class Semicolon : public Connectors
             vctr[i] = const_cast<char*>(v[i].c_str());
         }
         vctr.push_back(NULL);   //makes sure the command ends with a null char
-    }                           //so execvp can determine the end
+    }
+    virtual ~Semicolon()
+    {
+        for (unsigned i = 0; i < vctr.size(); ++i)
+        {
+            vctr.pop_back();
+        }
+    }
+                           //so execvp can determine the end
     virtual bool run(bool state)
     {
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
@@ -99,6 +107,15 @@ class And : public Connectors
         }
         vctr.push_back(NULL); //end with null char
     }
+
+    virtual ~And()
+    {
+        for (unsigned i = 0; i < vctr.size(); ++i)
+        {
+            vctr.pop_back();
+        }
+    }
+
     virtual bool run(bool state)
     {
         if (state != 1) //return if the previous command failed
@@ -171,6 +188,14 @@ class Or : public Connectors
         }
         vctr.push_back(NULL); //end with null
     }
+    virtual ~Or()
+    {
+        for (unsigned i = 0; i < vctr.size(); ++i)
+        {
+            vctr.pop_back();
+        }
+    }
+
     virtual bool run(bool state)
     {
         if (state != 0) //return if the previous command succeeded
@@ -425,13 +450,6 @@ int main()
             beg = durr;
         }
     
-        Connectors *curr;
-        for (vector<Connectors *>::iterator ptr = objects.begin();
-        ptr != objects.end(); ++ptr)
-        {
-            curr = *ptr;
-            delete curr;        
-        }
 
     }
     return 0;
