@@ -25,8 +25,19 @@ queue<string> q;
 ```
 
 We then create a temporary string vector to hold a single command
-and it's parameters/flags at a time. We then pop off the ront connector 
+and it's parameters/flags at a time. We then pop off the front connector 
 from the queue to determine what type of object the command should be.
+
+```C++
+class Connectors
+{
+    public:
+        virtual bool run(bool state) = 0;
+}
+```
+
+We haved created an abstract base class, class Connecctors, which allows us
+to dynamically call run on each type of object.
 
 We have three types of objects
 
@@ -39,4 +50,35 @@ We have three types of objects
   + Commands that run only if the previous command succeeded
 
 --- 
+
+We then created a vector of Connectors object pointers in order to store
+each new object of the three different classes we create. 
+
+```C++
+vector<Connectors*> objects;
+
+objects.push_back(new Semicolon(current));
+objects.push_back(new Or(current));
+objects.push_back(new And(current));
+```
+
+We then iterate through our objects vector so that we can call run on
+each type of object.
+
+Each of our run functions checks the specific state needed to run
+as well as checks for the exit call.
+
+We then use fork() to create a child process which can then use the
+execvp() call to run the passed in command.
+
+```C++
+c_pid = fork();
+
+execvp(pointer[0], pointer);
+```
+
+ Depending on execvp()
+succeeding or failing, we can set the new bool state and return to run
+the next object's run. 
+
  
