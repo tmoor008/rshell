@@ -62,7 +62,7 @@ class Semicolon : public Connectors
         else //if in the parent, wait for child to terminate
         {
             //checks if wait fails
-            if ((pid = wait(&status)) < 0)
+            if ((pid = waitpid(c_pid, &status, 0)) < 0)
             {
                 perror("wait failed");
                 state = 0;
@@ -134,7 +134,7 @@ class And : public Connectors
         else //if in the parent, wait for child to terminate
         {
             //checks if wait fails
-            if ((pid = wait(&status)) < 0)
+            if ((pid = waitpid(c_pid, &status, 0)) < 0)
             {
                 perror("wait failed");
                 state = 0;
@@ -206,7 +206,7 @@ class Or : public Connectors
         else //if in the parent, wait for child to terminate
         {
             //checks if wait fails
-            if ((pid = wait(&status)) < 0)
+            if ((pid = waitpid(c_pid, &status, 0)) < 0)
             {
                 perror("wait failed");
                 state = 0;
@@ -270,21 +270,74 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";#");
-        tokenizer tokens(input, sep);    
+        char_separator<char> sep(" ", ";#|&");
+        tokenizer tokens(input, sep);
 
-        
+        bool lastVal = 0;
+        for (tokenizer::iterator check = tokens.begin(); check != tokens.end(); ++check)
+        {
+            tokenizer::iterator count = check;
+            ++count;
+            if (count == tokens.end())
+            {
+                if (*check == "|" || *check == "&")
+                {                
+                    lastVal = 1;
+                }    
+            }
+        }
+
+        if (lastVal == 1)
+        {
+            cout << "end of input cannot be a connector" << endl;
+            continue;
+        }
+
         bool flag = 0; //flag to check when to start a new column
-        
+        bool wrong = 0;
         //holds commands in a 2d vector
 
         for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
         {
-            if ((*itr == ";") || (*itr == "||") || (*itr == "&&"))   
+            tokenizer::iterator temp = itr;
+            if (*itr == ";")
             {
+                ++temp;
+                if (temp != tokens.end())
+                {
+                    if (*temp == *itr)
+                    {
+                        cout << "cannot have multiple semicolons" << endl;
+                        wrong = 1;
+                        break;
+                    }
+                }
+                q.push(*itr);
+                column = column + 1;
+                flag = 0;   
+            }
+
+            else if ((*itr == "|") || (*itr == "&"))   
+            {  
+                ++temp;
+                if (*temp != *itr)
+                {
+                    cout << "cannot enter single connector" << endl;
+                    wrong = 1;
+                    break;
+                }
+                ++temp;
+                if (*temp == *itr)
+                {
+                    cout << "cannot enter 3+ connector" << endl;
+                    wrong = 1;
+                    break;   
+                }
+                         
                 q.push(*itr); //pushes connector into queue
                 column = column + 1; //increments column
-                flag = 0;                            
+                flag = 0;
+                ++itr;  //extra increments itr to not test second connector in pair                             
             }
             else if (*itr == "#")
             {
@@ -315,6 +368,11 @@ int main()
             
         //}
 
+        if (wrong == 1)
+        {
+            continue;
+        } 
+        
         //this part of the code creates a temp vector current which holds
         //a single command+param chunk at a time
         //then determines the connector previous to the command its told to run
@@ -336,12 +394,12 @@ int main()
                     objects.push_back(new Semicolon(current));
                 }
 
-                if (q.front() == "||")
+                if (q.front() == "|")
                 {   
                     objects.push_back(new Or(current));
                 }
             
-                if (q.front() == "&&")
+                if (q.front() == "&")
                 {
                     objects.push_back(new And(current));
                 }
