@@ -424,6 +424,15 @@ int main()
             //cout << "State after run: " << durr << endl;
             beg = durr;
         }
+    
+        Connectors *curr;
+        for (vector<Connectors *>::iterator ptr = objects.begin();
+        ptr != objects.end(); ++ptr)
+        {
+            curr = *ptr;
+            delete curr;        
+        }
+
     }
     return 0;
 }
