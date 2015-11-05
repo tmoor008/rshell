@@ -81,4 +81,15 @@ execvp(pointer[0], pointer);
 succeeding or failing, we can set the new bool state and return to run
 the next object's run. 
 
+> Known Bugs
+
+1. If one enters the up arrow key multiple times, and then backspaces, 
+    they can possibly delete the $.
+2. If the '#' is appended to an echo statement, it considers it a
+    comment and does not output it along with the rest of the echo.
+    This still makes everything after it a comment.
+3. In script, if you use backspace, the resulting code will sometimes show random
+    letters in the commands. 
+4. There is a possibility that getlogin() and gethostname() may fail. 
+
  
