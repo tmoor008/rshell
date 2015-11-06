@@ -19,8 +19,8 @@ char_separator<char> sep(" ", ";#|&");
 tokenizer tokens(input, sep);
 ```
 We then push our tokenized input into a 2D vector. Each column holds one command
-and any flags or aparameters it may have. A new column is created when a 
-connector is reached. Connectors are not stored in the array, rather, they
+and any flags or parameters it may have. A new column is created when a 
+connector is reached. Connectors are not stored in the vector, rather, they
 are pushed into a queue so that we can pop them off in the order they were
 input.
 
@@ -30,7 +30,7 @@ queue<string> q;
 ```
 
 We then create a temporary string vector to hold a single command
-and it's parameters/flags at a time. We then pop off the front connector 
+and its parameters/flags at a time. We then pop off the front connector 
 from the queue to determine what type of object the command should be.
 
 ```C++
@@ -41,7 +41,7 @@ class Connectors
 }
 ```
 
-We haved created an abstract base class, class Connecctors, which allows us
+We have created an abstract base class, class Connectors, which allows us
 to dynamically call run on each type of object.
 
 We have three types of objects
@@ -86,6 +86,8 @@ execvp(pointer[0], pointer);
 succeeding or failing, we can set the new bool state and return to run
 the next object's run. 
 
+---
+
 > Known Bugs
 
 1. If one enters the up arrow key multiple times, and then backspaces, 
@@ -96,5 +98,29 @@ the next object's run.
 3. In script, if you use backspace, the resulting code will sometimes show random
     letters in the commands. 
 4. There is a possibility that getlogin() and gethostname() may fail. 
+
+---
+
+> Fixed Bugs
+
+1. If a connector was the first or last thing in the input, we got out of range
+    or other errors. We fixed this by doing a check for what the first and last
+    inputs are and looping accordingly.
+2. If no spaces were entered between commands and connectors, the calls would
+    fail. We fixed this by making all three connectors separators for
+    tokenizer so that it could handle the commands whether there were spaces or
+    not between them and connectors.
+3. We originally called exit(0) when the user entered exit, but this lead to 
+    errors with the tokenizer being unable to free the memory it used in the
+    program. We fixed this by making an exit call return a flag which we check
+    for at the end. Then we can simply break out of the main while loop and 
+    return 0 the program normally. This then lets tokenizer free it's memory. 
+4. When we tried to store each command set within an object as an array, the
+    array would not hold the correct values. Instead, it was filled with
+    garbage values, even within the same function. To fix this, we stored
+    our values in a vector<char *> v. This also allowed us to create a 
+    pointer to it which could be passed into execvp() to run correctly.  
+
+
 
  
