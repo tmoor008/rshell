@@ -1,3 +1,7 @@
+Tia Moore
+Monica Moreno
+
+---
 # Rshell Project
 ---
 
