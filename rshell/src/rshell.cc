@@ -17,7 +17,7 @@ class Connectors    //abstract base class so we can dynamically call run
     public:
         virtual ~Connectors()
         {}
-        virtual bool run(bool state) = 0;  
+        virtual int run(int state) = 0;  
 };
 
 class Semicolon : public Connectors
@@ -36,13 +36,14 @@ class Semicolon : public Connectors
     }
     virtual ~Semicolon()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
     }
                            //so execvp can determine the end
-    virtual bool run(bool state)
+    virtual int run(int state)
     {
         char **pointer = &vctr[0];  //points to vctr we'll use for execvp
         
@@ -50,7 +51,8 @@ class Semicolon : public Connectors
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
         {
-            exit(0);
+            state = -1;
+            return state;
         }
         
         pid_t c_pid, pid;
@@ -112,13 +114,14 @@ class And : public Connectors
 
     virtual ~And()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
     }
 
-    virtual bool run(bool state)
+    virtual int run(int state)
     {
         if (state != 1) //return if the previous command failed
         {
@@ -131,7 +134,8 @@ class And : public Connectors
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
         {
-            exit(0);
+            state = -1;
+            return state;
         }
         
         pid_t c_pid, pid;
@@ -192,13 +196,14 @@ class Or : public Connectors
     }
     virtual ~Or()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
     }
 
-    virtual bool run(bool state)
+    virtual int run(int state)
     {
         if (state != 0) //return if the previous command succeeded
         {
@@ -211,7 +216,8 @@ class Or : public Connectors
         string p = pointer[0];
         if (p == ex) // check if the command entered is exit
         {
-            exit(0);
+            state = -1;
+            return state;
         }
         
         pid_t c_pid, pid;
@@ -439,8 +445,8 @@ int main()
             }   
             current.clear();
         }
-        bool beg = 0;
-        bool durr = 0;
+        int beg = 0;
+        int durr = 0;
         //this loop goes through the object vector and calls run on each 
         //object, dynamically calling the run of the class type
         //cout << "Size: " << objects.size()  << endl;
@@ -449,6 +455,10 @@ int main()
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
+            if (durr == -1)
+            {
+                break;
+            }
             beg = durr;
         }
         
@@ -460,8 +470,12 @@ int main()
             p = *ptr;
             delete p;
         }
-
         p = NULL;
+
+        if (durr == -1)
+        {
+            break;
+        }
     }
     return 0;
 }
