@@ -15,6 +15,8 @@ using namespace boost;
 class Connectors    //abstract base class so we can dynamically call run
 {
     public:
+        virtual ~Connectors()
+        {}
         virtual bool run(bool state) = 0;  
 };
 
@@ -449,8 +451,16 @@ int main()
             //cout << "State after run: " << durr << endl;
             beg = durr;
         }
-    
+        
+        Connectors *p;
+        for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
+        ++ptr)
+        {
+            p = *ptr;
+            delete p;
+        }
 
+        p = NULL;
     }
     return 0;
 }
