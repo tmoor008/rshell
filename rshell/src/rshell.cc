@@ -307,17 +307,34 @@ int main()
         tokenizer tokens(input, sep);
 
         bool lastVal = 0;
+        bool firstVal = 0;
+        
+        //checks for placement of connectors
         for (tokenizer::iterator check = tokens.begin(); check != tokens.end(); ++check)
         {
+            if (check == tokens.begin())
+            {
+                if ((*check == "|") || (*check == "&") || (*check == ";"))
+                {
+                    firstVal = 1;
+                }
+            }
             tokenizer::iterator count = check;
             ++count;
             if (count == tokens.end())
             {
-                if (*check == "|" || *check == "&")
+                if ((*check == "|") || (*check == "&"))
                 {                
                     lastVal = 1;
                 }    
             }
+        }
+
+        //loops again if the input begins or ends with a connector    
+        if (firstVal == 1)
+        {
+            cout << "beginning of input cannot be a connector" << endl;
+            continue;
         }
 
         if (lastVal == 1)
@@ -330,6 +347,7 @@ int main()
         bool wrong = 0;
         //holds commands in a 2d vector
 
+        //pushes commands into 2d vector and pushes connectors into a queue
         for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
         {
             tokenizer::iterator temp = itr;
@@ -401,6 +419,7 @@ int main()
             
         //}
 
+        //loops if wrong amt of connectors are entered
         if (wrong == 1)
         {
             continue;
@@ -445,8 +464,10 @@ int main()
             }   
             current.clear();
         }
+
         int beg = 0;
         int durr = 0;
+
         //this loop goes through the object vector and calls run on each 
         //object, dynamically calling the run of the class type
         //cout << "Size: " << objects.size()  << endl;
@@ -455,6 +476,7 @@ int main()
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
+            //check for if exit is called
             if (durr == -1)
             {
                 break;
@@ -471,7 +493,8 @@ int main()
             delete p;
         }
         p = NULL;
-
+        
+        //makes sure to end program if exit is called
         if (durr == -1)
         {
             break;
