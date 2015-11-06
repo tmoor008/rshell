@@ -452,6 +452,7 @@ int main()
             beg = durr;
         }
         
+        //deletes the dynamically allocated memory
         Connectors *p;
         for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
         ++ptr)
