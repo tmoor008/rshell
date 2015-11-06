@@ -36,7 +36,8 @@ class Semicolon : public Connectors
     }
     virtual ~Semicolon()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
@@ -112,7 +113,8 @@ class And : public Connectors
 
     virtual ~And()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
@@ -192,7 +194,8 @@ class Or : public Connectors
     }
     virtual ~Or()
     {
-        for (unsigned i = 0; i < vctr.size(); ++i)
+        unsigned sz = vctr.size();
+        for (unsigned i = 0; i < sz; ++i)
         {
             vctr.pop_back();
         }
