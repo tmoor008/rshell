@@ -1,0 +1,82 @@
+Script started on Fri 06 Nov 2015 03:31:07 PM PST
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ exit
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ ls -a; echo hello && exit
+.  ..  a.out  exit.script  rshell.cc
+hello
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ ls -a || exit
+.  ..  a.out  exit.script  rshell.cc
+mmore022@hammer.cs.ucr.edu$ touch tree && ls || echo one; exit
+a.out  exit.script  rshell.cc  tree
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ rm tree && echo hello || cal; date && echo testing || echo one; exit && echo no
+hello
+Fri Nov	 6 15:33:38 PST 2015
+testing
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ ls -a && exit
+.  ..  a.out  exit.script  rshell.cc
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo one || echo two || exit || echo hello
+one
+mmore022@hammer.cs.ucr.edu$ echo tree && echo one && exit && echo what
+tree
+one
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ exit || echo five; ls -a; cal
+[mmore022@hammer src]$ ./a.oout
+bash: ./a.oout: No such file or directory
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo hello && echo hi; exit; echo one
+hello
+hi
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ exit||echo hi
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo hi&&exit
+hi
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo hi;exit
+hi
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo hi && exit &&
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello || exit ||
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ech
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ echo hello||exit||
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ||exit
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ &&exit
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ;exit
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ |||exit && echo one
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ &&&exit || echo one
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ &&& exit || echo two
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ||| exit || echo testing
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ exit |||| echo what
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ exit||||exh
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ exit&&&&echo hi
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ exit &&&&& echo one two three
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ exit |||||
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ exit :::
+[mmore022@hammer src]$ exit &&& echo one &&
+bash: syntax error near unexpected token `&'
+[mmore022@hammer src]$ exit
+exit
+
+Script done on Fri 06 Nov 2015 03:44:08 PM PST
