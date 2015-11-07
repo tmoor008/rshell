@@ -1,0 +1,173 @@
+Script started on Fri 06 Nov 2015 04:18:32 PM PST
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ ls -a; echo hello && mkdir test || echo world; echo hi; ls
+.  ..  a.out  multi_command.script  rshell.cc
+hello
+hi
+a.out  multi_command.script  rshell.cc	test
+mmore022@hammer.cs.ucr.edu$ ls -a; echo one && echo two || echo three; echo five
+.  ..  a.out  multi_command.script  rshell.cc  test
+one
+two
+five
+mmore022@hammer.cs.ucr.edu$ ls -a; echo one; echo two; echho
+.  ..  a.out  multi_command.script  rshell.cc  test
+one
+two
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ ls -a; echo one && echo two || echo three #testing
+.  ..  a.out  multi_command.script  rshell.cc  test
+one
+two
+mmore022@hammer.cs.ucr.edu$ echo one||echo two||echo three&& echo four
+one
+four
+mmore022@hammer.cs.ucr.edu$ echo hello;echo first
+hello
+first
+mmore022@hammer.cs.ucr.edu$ ||echo hello && echo hi; echo one
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello && echo hi; echo three&&
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ || echo hello && echo hi
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo one ||| echo two
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ echo one|||echo hi
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ echo || echo two && echo five && exit
+
+five
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ cal; date && echo two && mkdir tree || touch house;
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+Fri Nov	 6 16:23:36 PST 2015
+two
+mmore022@hammer.cs.ucr.edu$ ls && echo checking if tree was created
+a.out  multi_command.script  rshell.cc	test  tree
+checking if tree was created
+mmore022@hammer.cs.ucr.edu$ rm test; rm -r tree
+rm: cannot remove `test': Is a directory
+mmore022@hammer.cs.ucr.edu$ rm -r test; rm -r tree
+rm: cannot remove `tree': No such file or directory
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  multi_command.script  rshell.cc
+mmore022@hammer.cs.ucr.edu$ echo one && eho
+one
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ & echo hello
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello&echo two
+cannot enter single connector
+mmore022@hammer.cs.ucr.edu$ echo testing|echo house
+cannot enter single connector
+mmore022@hammer.cs.ucr.edu$ | echo hello && echo house && echo is %% echo cool
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ & echo hello || echo house&& echo five;
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello && mkdir testdir &
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hi && touch file || touch tst.txt && echo hi; echo five &
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hi && touch temp.txt; echo five |
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hi && touch temp.txt; echo five|
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello && touch test.txt; echo hello||echo hi&
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  multi_command.script  rshell.cc
+mmore022@hammer.cs.ucr.edu$ echo hello && echo hi&&&&&
+end of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ echo hello&&&&&echo hi
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ echo hello&&echo world
+hello
+world
+mmore022@hammer.cs.ucr.edu$ echo two; touch myfile.txt||||tocuh file.txt
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ echo two; touch myfile.txt||||touch file.txt
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  multi_command.script  rshell.cc
+mmore022@hammer.cs.ucr.edu$ ;s
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ &&echo hello && echo hi
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ;echo hi
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ ;echo hello && echo would
+beginning of input cannot be a connector
+mmore022@hammer.cs.ucr.edu$ touch house &&& touch tree
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  multi_command.script  rshell.cc
+mmore022@hammer.cs.ucr.edu$ mkdir tree && touch house; echo hello || echo world; echo dog && cal
+hello
+dog
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  house  multi_command.script  rshell.cc  tree
+mmore022@hammer.cs.ucr.edu$ rm -r tree && rm house
+mmore022@hammer.cs.ucr.edu$ ls; success
+a.out  multi_command.script  rshell.cc
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ ls; echo hello && loop; echo hi
+a.out  multi_command.script  rshell.cc
+hello
+execvp failed: No such file or directory
+hi
+mmore022@hammer.cs.ucr.edu$ loop || echo hello && echo hi
+execvp failed: No such file or directory
+hello
+hi
+mmore022@hammer.cs.ucr.edu$ loop && echo hi || echo hello
+execvp failed: No such file or directory
+hello
+mmore022@hammer.cs.ucr.edu$ loop && echo hello && echo hi; echo hi && loop;
+execvp failed: No such file or directory
+hi
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ tree && echo one && echo two ; echo hi and loop
+.
+├── a.out
+├── multi_command.script
+└── rshell.cc
+
+0 directories, 3 files
+one
+two
+hi and loop
+mmore022@hammer.cs.ucr.edu$ loop &&echo one && echo tea; echo hi and echo success
+execvp failed: No such file or directory
+hi and echo success
+mmore022@hammer.cs.ucr.edu$ tree && echo one && echo two; echo hi && loop
+.
+├── a.out
+├── multi_command.script
+└── rshell.cc
+
+0 directories, 3 files
+one
+two
+hi
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ exit
+[mmore022@hammer src]$ exit
+exit
+
+Script done on Fri 06 Nov 2015 04:37:26 PM PST
