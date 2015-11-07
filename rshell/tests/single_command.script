@@ -1,0 +1,54 @@
+Script started on Fri 06 Nov 2015 04:00:44 PM PST
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ echo hello
+hello
+mmore022@hammer.cs.ucr.edu$ touch test.txt
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script	 test.txt
+mmore022@hammer.cs.ucr.edu$ rm test.txt
+mmore022@hammer.cs.ucr.edu$ ls -a
+.  ..  a.out  rshell.cc	 single_command.script
+mmore022@hammer.cs.ucr.edu$ cal
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+mmore022@hammer.cs.ucr.edu$ date
+Fri Nov	 6 16:01:11 PST 2015
+mmore022@hammer.cs.ucr.edu$ mkdir testdir
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script	 testdir
+mmore022@hammer.cs.ucr.edu$ rm -r testdir
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script
+mmore022@hammer.cs.ucr.edu$ echo testing one two three
+testing one two three
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script
+mmore022@hammer.cs.ucr.edu$ touch test.txt
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script	 test.txt
+mmore022@hammer.cs.ucr.edu$ wc -m test.txt
+0 test.txt
+mmore022@hammer.cs.ucr.edu$ wc -l test.txt
+0 test.txt
+mmore022@hammer.cs.ucr.edu$ wc -cctest.txt
+0 test.txt
+mmore022@hammer.cs.ucr.edu$ pwd
+/home/csmajs/mmore022/cs100_assn/rshell/src
+mmore022@hammer.cs.ucr.edu$ echo one two three
+one two three
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script	 test.txt
+mmore022@hammer.cs.ucr.edu$ rm test.txt
+mmore022@hammer.cs.ucr.edu$ ls
+a.out  rshell.cc  single_command.script
+mmore022@hammer.cs.ucr.edu$ exit
+[mmore022@hammer src]$ exit
+exit
+
+Script done on Fri 06 Nov 2015 04:07:29 PM PST
