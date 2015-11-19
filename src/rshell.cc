@@ -474,22 +474,22 @@ int main()
             }
             if (!q.empty() && first != 1)
             {
-                if (pflag)
+                if (pflag == 1)
                 {
                     if (current.at(0) == ")")
                     {
                         pflag = 0;
                         if (ptype == ";")
                         {
-                            objects.push_back(new Psemicolon(paren, pqu));
+                            //objects.push_back(new Psemicolon(paren, pqu));
                         }
                         if (ptype == "&")
                         {
-                            objects.push_back(new Pand(paren, pqu)); 
+                            //objects.push_back(new Pand(paren, pqu)); 
                         }
                         if (ptype == "|")
                         {
-                            objects.push_back(new Por(paren, pqu));
+                            //objects.push_back(new Por(paren, pqu));
                         }
                         paren.clear();
                         while (!pqu.empty())
@@ -513,23 +513,21 @@ int main()
                 if (q.front() == ";")
                 {
                     objects.push_back(new Semicolon(current));
-                    q.pop(); 
                 }
 
                 if (q.front() == "|")
                 {   
                     objects.push_back(new Or(current));
-                    q.pop();
 
                 }
             
                 if (q.front() == "&")
                 {
                     objects.push_back(new And(current));
-                    q.pop();
 
                 }
-                           }
+                q.pop();
+            }
             if (first == 1)
             {   
                 objects.push_back(new Semicolon(current));
