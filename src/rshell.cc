@@ -303,12 +303,12 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";#|&");
+        char_separator<char> sep(" ", ";#|&()");
         tokenizer tokens(input, sep);
 
         bool lastVal = 0;
         bool firstVal = 0;
-        
+ 
         //checks for placement of connectors
         for (tokenizer::iterator check = tokens.begin(); check != tokens.end(); ++check)
         {
@@ -396,7 +396,24 @@ int main()
             }
             else
             {
-                if (!flag)
+                if (*itr == "(")
+                {
+                    v.push_back(t);
+                    v.at(column).push_back(*itr);
+                    column = column + 1;
+                    flag = 0;
+                    continue;
+                }
+                else if (*itr == ")")
+                {
+                    column = column + 1;
+                    v.push_back(t);
+                    v.at(column).push_back(*itr);
+                    column = column + 1;
+                    flag = 0;
+                    continue;
+                }
+                else if (!flag)
                 {
                     v.push_back(t); //starts a new column
                     v.at(column).push_back(*itr);
@@ -409,12 +426,13 @@ int main()
             }
         }
 
+
         //checks the contents of v
         //for (unsigned i = 0; i < v.size(); ++i)
         //{
            //for (unsigned j = 0; j < v.at(i).size(); ++j)
            //{
-                //cout << v.at(i).at(j);   
+                //cout << v.at(i).at(j) << " / ";   
            //}
             
         //}
@@ -431,6 +449,13 @@ int main()
         //it then creates the corresponding connector class type object
         //and pushes the new object into a vector of Connectors pointers
         bool first = 1;
+        bool pflag = 0;
+        string ptype = "";
+        vector<string> r;
+        vector < vector<string> > paren;        
+        int col = 0;
+        queue<string> pqu;
+
         vector<string> current;
 
         for (unsigned i = 0; i < v.size(); ++i)
@@ -439,24 +464,72 @@ int main()
             {
                 current.push_back(v.at(i).at(j));     
             }
+            if (current.at(0) == "(")
+            {
+                first = 0;
+                pflag = 1;
+                ptype = q.front();
+                q.pop();
+                continue;
+            }
             if (!q.empty() && first != 1)
             {
+                if (pflag)
+                {
+                    if (current.at(0) == ")")
+                    {
+                        pflag = 0;
+                        if (ptype == ";")
+                        {
+                            objects.push_back(new Psemicolon(paren, pqu));
+                        }
+                        if (ptype == "&")
+                        {
+                            objects.push_back(new Pand(paren, pqu)); 
+                        }
+                        if (ptype == "|")
+                        {
+                            objects.push_back(new Por(paren, pqu));
+                        }
+                        paren.clear();
+                        while (!pqu.empty())
+                        {
+                            pqu.pop();
+                        }
+                    }    
+                    else
+                    {
+                        paren.push_back(r);
+                        for (unsigned k = 0; k < current.size(); ++k)
+                        {
+                            paren.at(col).push_back(current.at(k));   
+                        }
+                        col = col + 1;
+                        pqu.push(q.front());
+                        q.pop();
+                    }
+                    continue;    
+                }
                 if (q.front() == ";")
                 {
                     objects.push_back(new Semicolon(current));
+                    q.pop(); 
                 }
 
                 if (q.front() == "|")
                 {   
                     objects.push_back(new Or(current));
+                    q.pop();
+
                 }
             
                 if (q.front() == "&")
                 {
                     objects.push_back(new And(current));
+                    q.pop();
+
                 }
-                q.pop();
-            }
+                           }
             if (first == 1)
             {   
                 objects.push_back(new Semicolon(current));
