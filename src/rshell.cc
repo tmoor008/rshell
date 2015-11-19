@@ -11,6 +11,13 @@
 using namespace std;
 using namespace boost;
 
+int parenthesisState(vector<int> v, bool b)
+{
+    int totalState = 0;
+
+    return totalState;
+}
+
 
 class Connectors    //abstract base class so we can dynamically call run
 {
@@ -262,7 +269,326 @@ class Or : public Connectors
     }
 };
 
+class Por : public Connectors
+{
+    private:
+        vector< vector<string> > pv;
+        queue<string> pq;
+    public:
+    Por(vector< vector<string> > v, queue<string> q)
+    {
+        pv = v;
+        for (unsigned i = 0; i < pq.size(); ++i)
+        {
+            pq.push(q.front());
+            q.pop();
+        }
+    }
+    virtual ~Por()
+    {
+        unsigned sz = pv.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pv.pop_back();
+        }
+        sz = pq.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pq.pop();
+        }
+    }
+    virtual int run(int state)
+    {
+        if (state == 1) // return state if the previous command succeeded
+        {
+            return state; 
+        }        
+        
+        vector<Connectors*> objects;
+        bool first = 1;
+        vector<string> current;
+        bool semiCheck = 0; // flag for semicolon object in the objects vector
+        for (unsigned i = 0; i < pv.size(); ++i)
+        {
+            for (unsigned j = 0; j < pv.at(i).size(); ++j)
+            {
+                current.push_back(pv.at(i).at(j));     
+            }
+            if (!pq.empty() && first != 1)
+            {
+                if (pq.front() == ";")
+                {
+                    objects.push_back(new Semicolon(current));
+                    semiCheck = 1; // if a semicolon object is created set flag to true
+                }
 
+                if (pq.front() == "|")
+                {   
+                    objects.push_back(new Or(current));
+                }
+            
+                if (pq.front() == "&")
+                {
+                    objects.push_back(new And(current));
+                }
+                pq.pop();
+            }
+            if (first == 1)
+            {   
+                objects.push_back(new Semicolon(current));
+                first = 0;
+            }   
+            current.clear();
+        }
+
+        int beg = 0;
+        int durr = 0;
+
+        vector<int> pStates; // vector that holds the states of the run loop
+
+        //this loop goes through the object vector and calls run on each 
+        //object, dynamically calling the run of the class type
+        //cout << "Size: " << objects.size()  << endl;
+        for (unsigned i = 0; i < objects.size(); ++i)
+        {
+            pStates.push_back(beg); // push the beg state into the pCheck vector
+            //cout << "Curr size: " << objects.size() << endl;
+            durr = objects.at(i)->run(beg);
+            //cout << "State after run: " << durr << endl;
+            //check for if exit is called
+            if (durr == -1)
+            {
+                break;
+            }
+            beg = durr;
+        }
+        
+        //deletes the dynamically allocated memory
+        Connectors *p;
+        for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
+        ++ptr)
+        {
+            p = *ptr;
+            delete p;
+        }
+        p = NULL;
+        return parenthesisState(pStates, semiCheck);        
+   }
+   
+};
+
+
+
+class Pand : public Connectors
+{
+    private:
+        vector< vector<string> > pv;
+        queue<string> pq;
+    public:
+    Pand(vector< vector<string> > v, queue<string> q)
+    {
+        pv = v;
+        for (unsigned i = 0; i < pq.size(); ++i)
+        {
+            pq.push(q.front());
+            q.pop();
+        }
+    }
+    virtual ~Pand()
+    {
+        unsigned sz = pv.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pv.pop_back();
+        }
+        sz = pq.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pq.pop();
+        }
+    }
+    virtual int run(int state)
+    {
+        if (state == 0) // return state if the previous command failed
+        {
+            return state; 
+        }        
+        
+        vector<Connectors*> objects;
+        bool first = 1;
+        vector<string> current;
+        bool semiCheck = 0; // flag for semicolon object in the objects vector
+        for (unsigned i = 0; i < pv.size(); ++i)
+        {
+            for (unsigned j = 0; j < pv.at(i).size(); ++j)
+            {
+                current.push_back(pv.at(i).at(j));     
+            }
+            if (!pq.empty() && first != 1)
+            {
+                if (pq.front() == ";")
+                {
+                    objects.push_back(new Semicolon(current));
+                    semiCheck = 1; // if a semicolon object is created set flag to true
+                }
+
+                if (pq.front() == "|")
+                {   
+                    objects.push_back(new Or(current));
+                }
+            
+                if (pq.front() == "&")
+                {
+                    objects.push_back(new And(current));
+                }
+                pq.pop();
+            }
+            if (first == 1)
+            {   
+                objects.push_back(new Semicolon(current));
+                first = 0;
+            }   
+            current.clear();
+        }
+
+        int beg = 0;
+        int durr = 0;
+
+        vector<int> pStates; // vector that holds the states of the run loop
+
+        //this loop goes through the object vector and calls run on each 
+        //object, dynamically calling the run of the class type
+        //cout << "Size: " << objects.size()  << endl;
+        for (unsigned i = 0; i < objects.size(); ++i)
+        {
+            pStates.push_back(beg); // push the beg state into the pCheck vector
+            //cout << "Curr size: " << objects.size() << endl;
+            durr = objects.at(i)->run(beg);
+            //cout << "State after run: " << durr << endl;
+            //check for if exit is called
+            if (durr == -1)
+            {
+                break;
+            }
+            beg = durr;
+        }
+        
+        //deletes the dynamically allocated memory
+        Connectors *p;
+        for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
+        ++ptr)
+        {
+            p = *ptr;
+            delete p;
+        }
+        p = NULL;
+        return parenthesisState(pStates, semiCheck);        
+   }
+   
+};
+
+class Psemicolon : public Connectors
+{
+    private:
+        vector< vector<string> > pv;
+        queue<string> pq;
+    public:
+    Psemicolon(vector< vector<string> > v, queue<string> q)
+    {
+        pv = v;
+        for (unsigned i = 0; i < pq.size(); ++i)
+        {
+            pq.push(q.front());
+            q.pop();
+        }
+    }
+    virtual ~Psemicolon()
+    {
+        unsigned sz = pv.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pv.pop_back();
+        }
+        sz = pq.size();
+        for (unsigned i = 0; i < sz; ++i)
+        {
+            pq.pop();
+        }
+    }
+    virtual int run(int state)
+    {
+        vector<Connectors*> objects;
+        bool first = 1;
+        vector<string> current;
+        bool semiCheck = 0; // flag for semicolon object in the objects vector
+        for (unsigned i = 0; i < pv.size(); ++i)
+        {
+            for (unsigned j = 0; j < pv.at(i).size(); ++j)
+            {
+                current.push_back(pv.at(i).at(j));     
+            }
+            if (!pq.empty() && first != 1)
+            {
+                if (pq.front() == ";")
+                {
+                    objects.push_back(new Semicolon(current));
+                    semiCheck = 1; // if a semicolon object is created set flag to true
+                }
+
+                if (pq.front() == "|")
+                {   
+                    objects.push_back(new Or(current));
+                }
+            
+                if (pq.front() == "&")
+                {
+                    objects.push_back(new And(current));
+                }
+                pq.pop();
+            }
+            if (first == 1)
+            {   
+                objects.push_back(new Semicolon(current));
+                first = 0;
+            }   
+            current.clear();
+        }
+
+        int beg = 0;
+        int durr = 0;
+
+        vector<int> pStates; // vector that holds the states of the run loop
+
+        //this loop goes through the object vector and calls run on each 
+        //object, dynamically calling the run of the class type
+        //cout << "Size: " << objects.size()  << endl;
+        for (unsigned i = 0; i < objects.size(); ++i)
+        {
+            pStates.push_back(beg); // push the beg state into the pCheck vector
+            //cout << "Curr size: " << objects.size() << endl;
+            durr = objects.at(i)->run(beg);
+            //cout << "State after run: " << durr << endl;
+            //check for if exit is called
+            if (durr == -1)
+            {
+                break;
+            }
+            beg = durr;
+        }
+        
+        //deletes the dynamically allocated memory
+        Connectors *p;
+        for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
+        ++ptr)
+        {
+            p = *ptr;
+            delete p;
+        }
+        p = NULL;
+        return parenthesisState(pStates, semiCheck);        
+   }
+   
+};
 
 int main()
 {
