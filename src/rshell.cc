@@ -498,7 +498,6 @@ class Psemicolon : public Connectors
     }
     virtual int run(int state)
     {
-        cout << pq.front() << endl;
         pq.pop();
         vector<Connectors*> objects;
         bool first = 1;
@@ -749,8 +748,8 @@ int main()
         if (wrong == 1)
         {
             continue;
-        } 
-        
+        }
+
         //this part of the code creates a temp vector current which holds
         //a single command+param chunk at a time
         //then determines the connector previous to the command its told to run
@@ -783,6 +782,7 @@ int main()
                 }
                 else if (!q.empty() && !first)
                 {
+                    col = 0;
                     if (q.front() == ";")
                     {
                         ptype = ";";    
@@ -796,6 +796,8 @@ int main()
                         ptype = "|";
                     }
                     q.pop();
+                    current.clear();
+                    continue;
                 }
                 first = 0;
             }
