@@ -385,11 +385,12 @@ class Pand : public Connectors
         vector< vector<string> > pv;
         queue<string> pq;
     public:
-    Pand(vector< vector<string> > v, queue<string> q)
+    Pand(vector< vector<string> > v, queue<string> q) 
     {
         pv = v;
         for (unsigned i = 0; i < pq.size(); ++i)
         {
+            cout << q.front() << " ";
             pq.push(q.front());
             q.pop();
         }
@@ -439,6 +440,7 @@ class Pand : public Connectors
             
                 if (pq.front() == "&")
                 {
+                    cout << "and object" << endl;
                     objects.push_back(new And(current));
                 }
                 pq.pop();
@@ -791,9 +793,12 @@ int main()
             }
             if (current.at(0) == "(")
             {
-                first = 0;
                 pflag = 1;
-                if (!q.empty() && !first)
+                if (first == 1)
+                {
+                    ptype = ";";
+                }
+                else if (!q.empty() && !first)
                 {
                     if (q.front() == ";")
                     {
@@ -809,6 +814,7 @@ int main()
                     } 
                     q.pop();
                 }
+                first = 0;
             }
             else if ((!q.empty() && first != 1) || pflag == 1)
             {
