@@ -345,7 +345,10 @@ class Por : public Connectors
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
-            pStates.push_back(beg); // push the beg state into the pCheck vector
+            if (i != 0)
+            {
+                pStates.push_back(beg); // push the beg state into the pCheck vector
+            }
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
@@ -356,6 +359,7 @@ class Por : public Connectors
             }
             beg = durr;
         }
+        pStates.push_back(beg);
         
         //deletes the dynamically allocated memory
         Connectors *p;
@@ -449,7 +453,10 @@ class Pand : public Connectors
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
-            pStates.push_back(beg); // push the beg state into the pCheck vector
+            if (i != 0)
+            {
+                pStates.push_back(beg); // push the beg state into the pCheck vector
+            }
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
@@ -460,6 +467,7 @@ class Pand : public Connectors
             }
             beg = durr;
         }
+        pStates.push_back(beg);
         
         //deletes the dynamically allocated memory
         Connectors *p;
