@@ -13,7 +13,7 @@ using namespace boost;
 
 int parenthesisState(vector<int> v, bool b)
 {
-    int totalState = 1;
+    int totalState = v.at(v.size() - 1);
 
     return totalState;
 }
@@ -546,7 +546,10 @@ class Psemicolon : public Connectors
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
-            pStates.push_back(beg); // push the beg state into the pCheck vector
+            if (i != 0)
+            {
+                pStates.push_back(beg); // push the beg state into the pCheck vector
+            }
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
@@ -557,7 +560,7 @@ class Psemicolon : public Connectors
             }
             beg = durr;
         }
-        
+        pStates.push_back(beg);
         //deletes the dynamically allocated memory
         Connectors *p;
         for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
@@ -753,7 +756,7 @@ int main()
           // }
             
         //}
-        cout << endl; 
+        //cout << endl; 
         //loops if wrong amt of connectors are entered
         if (wrong == 1)
         {
