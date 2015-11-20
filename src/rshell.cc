@@ -611,7 +611,7 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";#|&()");
+        char_separator<char> sep(" ", ";#|&()[]");
         tokenizer tokens(input, sep);
 
         bool lastVal = 0;
@@ -699,6 +699,15 @@ int main()
                 flag = 0;
                 ++itr;  //extra increments itr to not test second connector in pair                             
             }
+            else if ((*itr == "[") || (*itr == "]"))
+            {
+                if (*itr == "[")
+                {
+                    v.push_back(t);
+                    v.at(column).push_back("test");
+                    flag = 1;
+                }
+            }
             else if (*itr == "#")
             {
                 break;          //if there's a comment, break out of loop
@@ -740,10 +749,11 @@ int main()
         //{
            //for (unsigned j = 0; j < v.at(i).size(); ++j)
            //{
-                //cout << v.at(i).at(j) << "/";   
-           //}
+                //cout << v.at(i).at(j) << " *** ";   
+          // }
             
         //}
+        cout << endl; 
         //loops if wrong amt of connectors are entered
         if (wrong == 1)
         {
