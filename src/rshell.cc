@@ -673,6 +673,7 @@ int main()
         bool wrong = 0;
         //holds commands in a 2d vector
 
+
         //pushes commands into 2d vector and pushes connectors into a queue
         for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
         {
@@ -695,7 +696,7 @@ int main()
             }
 
             else if ((*itr == "|") || (*itr == "&"))   
-            {  
+            {
                 ++temp;
                 if (*temp != *itr)
                 {
@@ -728,7 +729,7 @@ int main()
                     v.at(column).push_back(*itr);
                     column = column + 1;
                     flag = 0;
-                    continue;
+                    
                 }
                 else if (*itr == ")")
                 {
@@ -737,7 +738,7 @@ int main()
                     v.at(column).push_back(*itr);
                     column = column + 1;
                     flag = 0;
-                    continue;
+                   
                 }
                 else if (!flag)
                 {
@@ -752,7 +753,6 @@ int main()
             }
         }
 
-
         //checks the contents of v
         //for (unsigned i = 0; i < v.size(); ++i)
         //{
@@ -762,7 +762,6 @@ int main()
            //}
             
         //}
-
         //loops if wrong amt of connectors are entered
         if (wrong == 1)
         {
@@ -776,7 +775,7 @@ int main()
         //and pushes the new object into a vector of Connectors pointers
         bool first = 1;
         bool pflag = 0;
-        string ptype = "";
+        string ptype = "default";        
         vector<string> r;
         vector < vector<string> > paren;        
         int col = 0;
@@ -794,8 +793,22 @@ int main()
             {
                 first = 0;
                 pflag = 1;
-                ptype = q.front();
-                q.pop();
+                if (!q.empty() && !first)
+                {
+                    if (q.front() == ";")
+                    {
+                        ptype = ";";    
+                    }
+                    else if (q.front() == "&")
+                    {
+                        ptype = "&";    
+                    }
+                    else if (q.front() == "|")
+                    {
+                        ptype = "|";
+                    } 
+                    q.pop();
+                }
                 continue;
             }
             if (!q.empty() && first != 1)
@@ -805,17 +818,17 @@ int main()
                     if (current.at(0) == ")")
                     {
                         pflag = 0;
-                        if (ptype == ";")
+                        if (ptype == ";" || ptype == "default")
                         {
-                            //objects.push_back(new Psemicolon(paren, pqu));
+                            objects.push_back(new Psemicolon(paren, pqu));
                         }
                         if (ptype == "&")
                         {
-                            //objects.push_back(new Pand(paren, pqu)); 
+                            objects.push_back(new Pand(paren, pqu)); 
                         }
                         if (ptype == "|")
                         {
-                            //objects.push_back(new Por(paren, pqu));
+                            objects.push_back(new Por(paren, pqu));
                         }
                         paren.clear();
                         while (!pqu.empty())
