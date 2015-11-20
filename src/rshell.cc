@@ -13,7 +13,7 @@ using namespace boost;
 
 int parenthesisState(vector<int> v, bool b)
 {
-    int totalState = 1;
+    int totalState = v.at(v.size() - 1);
 
     return totalState;
 }
@@ -546,7 +546,10 @@ class Psemicolon : public Connectors
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
-            pStates.push_back(beg); // push the beg state into the pCheck vector
+            if (i != 0)
+            {
+                pStates.push_back(beg); // push the beg state into the pCheck vector
+            }
             //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
             //cout << "State after run: " << durr << endl;
@@ -557,7 +560,7 @@ class Psemicolon : public Connectors
             }
             beg = durr;
         }
-        
+        pStates.push_back(beg);
         //deletes the dynamically allocated memory
         Connectors *p;
         for (vector<Connectors*>::iterator ptr = objects.begin(); ptr != objects.end();
@@ -611,7 +614,7 @@ int main()
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
-        char_separator<char> sep(" ", ";#|&()[]");
+        char_separator<char> sep(" ", ";#|&()[]\"");
         tokenizer tokens(input, sep);
 
         bool lastVal = 0;
@@ -653,6 +656,8 @@ int main()
 
         bool flag = 0; //flag to check when to start a new column
         bool wrong = 0;
+        bool quotes = 0;
+        bool endquote = 0;
         //holds commands in a 2d vector
 
 
@@ -660,7 +665,7 @@ int main()
         for (tokenizer::iterator itr = tokens.begin(); itr != tokens.end(); ++itr)
         {
             tokenizer::iterator temp = itr;
-            if (*itr == ";")
+            if (*itr == ";" && !quotes)
             {
                 ++temp;
                 if (temp != tokens.end())
@@ -676,8 +681,7 @@ int main()
                 column = column + 1;
                 flag = 0;   
             }
-
-            else if ((*itr == "|") || (*itr == "&"))   
+            else if (((*itr == "|") || (*itr == "&")) && !quotes)   
             {
                 ++temp;
                 if (*temp != *itr)
@@ -699,7 +703,7 @@ int main()
                 flag = 0;
                 ++itr;  //extra increments itr to not test second connector in pair                             
             }
-            else if ((*itr == "[") || (*itr == "]"))
+            else if (((*itr == "[") || (*itr == "]")) && !quotes)
             {
                 if (*itr == "[")
                 {
@@ -708,13 +712,28 @@ int main()
                     flag = 1;
                 }
             }
-            else if (*itr == "#")
+            //extra credit that implements quotation marks
+            else if (*itr == "\"")
+            {
+                if (!endquote)
+                {
+                    quotes = 1; //sets a flag to bundle everything in quotes
+                    endquote = 1;
+                }
+                else
+                {
+                    quotes = 0;
+                    endquote = 0;
+                }
+            }
+            else if (*itr == "#" && !quotes)
             {
                 break;          //if there's a comment, break out of loop
             }
             else
             {
-                if (*itr == "(")
+                //checks for () to parse them into their own columns
+                if (*itr == "(" && !quotes)
                 {
                     q.push(";");
                     v.push_back(t);
@@ -723,7 +742,7 @@ int main()
                     flag = 0;
                     
                 }
-                else if (*itr == ")")
+                else if (*itr == ")" && !quotes)
                 {
                     column = column + 1;
                     v.push_back(t);
@@ -750,10 +769,10 @@ int main()
            //for (unsigned j = 0; j < v.at(i).size(); ++j)
            //{
                 //cout << v.at(i).at(j) << " *** ";   
-          // }
-            
+           //}
+             //cout << endl; 
         //}
-        cout << endl; 
+        //cout << endl; 
         //loops if wrong amt of connectors are entered
         if (wrong == 1)
         {
@@ -780,7 +799,7 @@ int main()
             {
                 current.push_back(v.at(i).at(j));     
             }
-            if (current.at(0) == "(")
+            if (current.at(0) == "(") //checks type of () object to make
             {
                 pflag = 1;
                 if (first == 1)
@@ -813,6 +832,8 @@ int main()
             }
             else if ((!q.empty() && first != 1) || pflag == 1)
             {
+                //pushes items inside () into a temp 2D vector
+                //which is then passed into a Pcommand object
                 if (pflag == 1)
                 {
                     if (current.at(0) == ")")
