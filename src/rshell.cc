@@ -13,7 +13,7 @@ using namespace boost;
 
 int parenthesisState(vector<int> v, bool b)
 {
-    int totalState = 0;
+    int totalState = 1;
 
     return totalState;
 }
@@ -758,8 +758,8 @@ int main()
         //{
            //for (unsigned j = 0; j < v.at(i).size(); ++j)
            //{
-                //cout << v.at(i).at(j) << " / ";   
-           //}
+                //cout << v.at(i).at(j) << "/";   
+          // }
             
         //}
         //loops if wrong amt of connectors are entered
@@ -809,9 +809,8 @@ int main()
                     } 
                     q.pop();
                 }
-                continue;
             }
-            if (!q.empty() && first != 1)
+            else if ((!q.empty() && first != 1) || pflag == 1)
             {
                 if (pflag == 1)
                 {
@@ -837,16 +836,20 @@ int main()
                         }
                     }    
                     else
-                    {
+                    {   
                         paren.push_back(r);
                         for (unsigned k = 0; k < current.size(); ++k)
                         {
                             paren.at(col).push_back(current.at(k));   
                         }
                         col = col + 1;
-                        pqu.push(q.front());
-                        q.pop();
+                        if (!q.empty())
+                        {
+                            pqu.push(q.front());
+                            q.pop();
+                        }
                     }
+                    current.clear();
                     continue;    
                 }
                 if (q.front() == ";")
