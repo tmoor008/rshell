@@ -62,6 +62,51 @@ class Semicolon : public Connectors
             return state;
         }
         
+        string tst = "test";
+        if (p == tst)
+        {
+            string e = "-e";
+            string f = "-f";
+            string d = "-d";
+            p = pointer[1];
+            if (p == e)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return 1;
+                }
+                return 0;
+            }
+            else if (p == f)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISREG(fileS.st_mode);
+                }
+                return 0; 
+            }
+            else if (p == d)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISDIR(fileS.st_mode);
+                }
+                return 0; 
+            }          
+            else
+            {
+                struct stat fileS;
+                if (stat(pointer[1], &fileS) == 0) 
+                {
+                    return 1;
+                } 
+                return 0;
+            }
+        }
+        
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
@@ -145,6 +190,51 @@ class And : public Connectors
             return state;
         }
         
+        string tst = "test";
+        if (p == tst)
+        {
+            string e = "-e";
+            string f = "-f";
+            string d = "-d";
+            p = pointer[1];
+            if (p == e)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return 1;
+                }
+                return 0;
+            }
+            else if (p == f)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISREG(fileS.st_mode);
+                }
+                return 0; 
+            }
+            else if (p == d)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISDIR(fileS.st_mode);
+                }
+                return 0; 
+            }          
+            else
+            {
+                struct stat fileS;
+                if (stat(pointer[1], &fileS) == 0) 
+                {
+                    return 1;
+                } 
+                return 0;
+            }
+        }
+        
         pid_t c_pid, pid;
         int status;
         c_pid = fork();
@@ -225,6 +315,51 @@ class Or : public Connectors
         {
             state = -1;
             return state;
+        }
+        
+        string tst = "test";
+        if (p == tst)
+        {
+            string e = "-e";
+            string f = "-f";
+            string d = "-d";
+            p = pointer[1];
+            if (p == e)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return 1;
+                }
+                return 0;
+            }
+            else if (p == f)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISREG(fileS.st_mode);
+                }
+                return 0; 
+            }
+            else if (p == d)
+            {
+                struct stat fileS;
+                if (stat(pointer[2], &fileS) == 0) 
+                {
+                    return S_ISDIR(fileS.st_mode);
+                }
+                return 0; 
+            }          
+            else
+            {
+                struct stat fileS;
+                if (stat(pointer[1], &fileS) == 0) 
+                {
+                    return 1;
+                } 
+                return 0;
+            }
         }
         
         pid_t c_pid, pid;
@@ -374,8 +509,6 @@ class Por : public Connectors
    }
    
 };
-
-
 
 class Pand : public Connectors
 {
