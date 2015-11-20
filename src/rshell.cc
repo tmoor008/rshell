@@ -275,15 +275,8 @@ class Por : public Connectors
         vector< vector<string> > pv;
         queue<string> pq;
     public:
-    Por(vector< vector<string> > v, queue<string> q)
-    {
-        pv = v;
-        for (unsigned i = 0; i < pq.size(); ++i)
-        {
-            pq.push(q.front());
-            q.pop();
-        }
-    }
+    Por(vector< vector<string> > v, queue<string> q) : pv(v), pq(q) 
+    {}
     virtual ~Por()
     {
         unsigned sz = pv.size();
@@ -299,6 +292,7 @@ class Por : public Connectors
     }
     virtual int run(int state)
     {
+        pq.pop();
         if (state == 1) // return state if the previous command succeeded
         {
             return state; 
@@ -385,16 +379,8 @@ class Pand : public Connectors
         vector< vector<string> > pv;
         queue<string> pq;
     public:
-    Pand(vector< vector<string> > v, queue<string> q) 
-    {
-        pv = v;
-        for (unsigned i = 0; i < pq.size(); ++i)
-        {
-            cout << q.front() << " ";
-            pq.push(q.front());
-            q.pop();
-        }
-    }
+    Pand(vector< vector<string> > v, queue<string> q) : pv(v), pq(q) 
+    {}
     virtual ~Pand()
     {
         unsigned sz = pv.size();
@@ -410,6 +396,7 @@ class Pand : public Connectors
     }
     virtual int run(int state)
     {
+        pq.pop();
         if (state == 0) // return state if the previous command failed
         {
             return state; 
@@ -440,7 +427,6 @@ class Pand : public Connectors
             
                 if (pq.front() == "&")
                 {
-                    cout << "and object" << endl;
                     objects.push_back(new And(current));
                 }
                 pq.pop();
@@ -495,15 +481,8 @@ class Psemicolon : public Connectors
         vector< vector<string> > pv;
         queue<string> pq;
     public:
-    Psemicolon(vector< vector<string> > v, queue<string> q)
-    {
-        pv = v;
-        for (unsigned i = 0; i < pq.size(); ++i)
-        {
-            pq.push(q.front());
-            q.pop();
-        }
-    }
+    Psemicolon(vector< vector<string> > v, queue<string> q) : pv(v), pq(q) 
+    {}
     virtual ~Psemicolon()
     {
         unsigned sz = pv.size();
@@ -519,6 +498,8 @@ class Psemicolon : public Connectors
     }
     virtual int run(int state)
     {
+        cout << pq.front() << endl;
+        pq.pop();
         vector<Connectors*> objects;
         bool first = 1;
         vector<string> current;
@@ -727,6 +708,7 @@ int main()
             {
                 if (*itr == "(")
                 {
+                    q.push(";");
                     v.push_back(t);
                     v.at(column).push_back(*itr);
                     column = column + 1;
@@ -738,7 +720,6 @@ int main()
                     column = column + 1;
                     v.push_back(t);
                     v.at(column).push_back(*itr);
-                    column = column + 1;
                     flag = 0;
                    
                 }
@@ -761,7 +742,7 @@ int main()
            //for (unsigned j = 0; j < v.at(i).size(); ++j)
            //{
                 //cout << v.at(i).at(j) << "/";   
-          // }
+           //}
             
         //}
         //loops if wrong amt of connectors are entered
@@ -784,7 +765,6 @@ int main()
         queue<string> pqu;
 
         vector<string> current;
-
         for (unsigned i = 0; i < v.size(); ++i)
         {
             for (unsigned j = 0; j < v.at(i).size(); ++j)
@@ -797,6 +777,9 @@ int main()
                 if (first == 1)
                 {
                     ptype = ";";
+                    first = 0;
+                    current.clear();
+                    continue;
                 }
                 else if (!q.empty() && !first)
                 {
@@ -811,7 +794,7 @@ int main()
                     else if (q.front() == "|")
                     {
                         ptype = "|";
-                    } 
+                    }
                     q.pop();
                 }
                 first = 0;
@@ -829,7 +812,7 @@ int main()
                         }
                         if (ptype == "&")
                         {
-                            objects.push_back(new Pand(paren, pqu)); 
+                            objects.push_back(new Pand(paren, pqu));
                         }
                         if (ptype == "|")
                         {
@@ -868,7 +851,6 @@ int main()
                     objects.push_back(new Or(current));
 
                 }
-            
                 if (q.front() == "&")
                 {
                     objects.push_back(new And(current));
@@ -892,9 +874,7 @@ int main()
         //cout << "Size: " << objects.size()  << endl;
         for (unsigned i = 0; i < objects.size(); ++i)
         {
-            //cout << "Curr size: " << objects.size() << endl;
             durr = objects.at(i)->run(beg);
-            //cout << "State after run: " << durr << endl;
             //check for if exit is called
             if (durr == -1)
             {
