@@ -7,6 +7,7 @@
 #include <cstring>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 using namespace boost;
