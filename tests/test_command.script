@@ -1,0 +1,114 @@
+Script started on Fri 20 Nov 2015 11:18:53 AM PST
+[mmore022@hammer src]$ g++ -Wall -Werror -ansi -pedantic rshell.cc
+[mmore022@hammer src]$ ./a.out
+mmore022@hammer.cs.ucr.edu$ test -e /test/file || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ [ -e /test/file ] || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ pwd
+/home/csmajs/mmore022/cs100_assn/src
+mmore022@hammer.cs.ucr.edu$ test -e /ome/csmajs && echo passed
+mmore022@hammer.cs.ucr.edu$ test -e /home/csmajs/mmore022/cs100_assn && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ [ -e /home/csmajs/mmore022/cs100_assn ] && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e /home/csmajs/mmore022/cs100_assn) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e test/file) && echo passed
+hello
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e /tst/file) && echo passed
+hello
+mmore022@hammer.cs.ucr.edu$ (test -e /tst/file || echo hello && echo test) && echo passed
+hello
+test
+passed
+mmore022@hammer.cs.ucr.edu$ (test -e /tst/file) && echo passed
+mmore022@hammer.cs.ucr.edu$ (test -e /tst/file) || echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ (test -e /sst/file) ||| echo passed
+cannot enter 3+ connector
+mmore022@hammer.cs.ucr.edu$ (test -e//sst/file) || (test -e /hom/csmajs) && echo passed
+mmore022@hammer.cs.ucr.edu$ (test -e /sst/file) || (test -e /home/csmajs) && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ (test -e /st/file || test -e /home/csmajs) && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ (test -e /st/file; echo hello) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (test -e /st/file && echo hello) && echo passed
+mmore022@hammer.cs.ucr.edu$ (test -e /st/file && echo hello ) && echo passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && echo hi)
+hello
+hi
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e/home)
+hello
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e /home/csmajs; echo hi; loop) && echo failed
+hello
+hi
+execvp failed: No such file or directory
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -e /home/csmajs; echo hi; loop) || echo failed
+hello
+hi
+execvp failed: No such file or directory
+failed
+mmore022@hammer.cs.ucr.edu$ (test -e /st/file) && (echo hello && echo hi)
+mmore022@hammer.cs.ucr.edu$ test -e /cs/file && echo hello
+mmore022@hammer.cs.ucr.edu$ test -e /file/random; echo hello
+hello
+mmore022@hammer.cs.ucr.edu$ test -f /test /rand || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ test -f /csmajs/ || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ test -f /home/csmajs/mmore022/cs100_assn/src/rshell.cc && echo hpa
+hpa
+mmore022@hammer.cs.ucr.edu$ [ -f /home/csmajs/mmore022/cs100_assn/src/rshell.cc ] && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ ( [ -f /home/csmajs/mmore022/cs100_assn/src/rshell.cc ]) && echoopassed
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && [ -f /home/csmajs/mmore022/cs100_assn/src/rshell.cc ]) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -f /home/csmajs/mmore022/cs100_assn/src/rshell.cc) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && test -d /home/csmajs) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ test -d /home/csmajs && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ test -d /home/balh || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ [ -d /home/blah ] || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ [ -d /home/csmajs ] && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ ([ -d home/csmajs ] && echo hello) && echo passed
+mmore022@hammer.cs.ucr.edu$ ([ -d /home/csmajs ] && echo hello) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ [ /home/csmajs ] && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ [ /home/blah ] || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ test /home/csmajs && echo passed
+passed
+mmore022@hammer.cs.ucr.edu$ test /home/cs && echo passed
+mmore022@hammer.cs.ucr.edu$ test ./
+mmore022@hammer.cs.ucr.edu$ test /home/blach || echo failed
+failed
+mmore022@hammer.cs.ucr.edu$ (test /home/csmajs && echo hello) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello || echo hi && test /home/csmajs) && echo passed
+hello
+passed
+mmore022@hammer.cs.ucr.edu$ (echo hello && echo hi && [ /home/csmajs ] ) && echo passed
+hello
+hi
+passed
+mmore022@hammer.cs.ucr.edu$ exit
+[mmore022@hammer src]$ exit
+exit
+
+Script done on Fri 20 Nov 2015 11:50:40 AM PST
