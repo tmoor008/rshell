@@ -9,20 +9,71 @@ Monica Moreno
 > Summary
 
 This is Monica Moreno and Tia Moore's implementation of a command shell called 
-rshell.
+rshell. Our program tokenizes input from the user, and utilizes 2D vectors to 
+separate each command into a column. We then create objects dependant on the
+previous connector using a column from the 2D vector. We then call a run function
+which executes the command packaged within the objects. We have added precedence 
+functionality which allows a larger chunk of code within () to run alongside
+and operator. The entire chunk will return a bool which is then tested against
+the next connector. We have also added the test command which will test a path
+of a given file. Both test and it's operators [] are functional. 
+
+---
+> Design
+---
 Our code prints a command prompt which reads in a line of commands and 
 connectors. We then parse the input line using a tokenizer. We use the tokenizer
-separator to separate not only on spaces but on the connectors as well.
+separator to separate not only on spaces but on the connectors as well as parenthesis
+for precedence and brackets for the test command.
 
 ```C++
-char_separator<char> sep(" ", ";#|&");
+char_separator<char> sep(" ", ";#|&()[]\"");
 tokenizer tokens(input, sep);
 ```
 We then push our tokenized input into a 2D vector. Each column holds one command
 and any flags or parameters it may have. A new column is created when a 
 connector is reached. Connectors are not stored in the vector, rather, they
 are pushed into a queue so that we can pop them off in the order they were
-input.
+input. Parentheses, however, are pushed into the 2D vector so that precedence
+can be checked for later. 
+
+```C++
+else if (((*itr == "[") || (*itr == "]")) && !quotes)
+{
+    if (*itr == "[")
+    {
+        v.push_back(t);
+        v.at(column).push_back("test");
+        flag = 1;
+    }
+}
+```
+
+We check for the brackets used for the test command in this section as well. We
+merely have to check for the "[" or "]" in the token, and if it is the first, 
+we push in the word "test" to the vector. If it is the latter, we simply do
+nothing because the test portion is already taken care of. This was, we can 
+handle noth "test" and [] inputs as just test and not have to deal with
+checking the brackets later.
+
+```C++
+else if (*itr == "\"")
+{
+    if (!endquote)
+    {
+        quotes = 1;
+        endquote = 1;
+    }
+    else
+    {
+        quotes = 0;
+        endquote = 0;
+    }
+}
+```
+We also check for quotes here. To deal with quotes, we check for the first
+quote, and then set two flags (quotes and endquotes)  so that everything up until the second quote is
+pushed into the same column.
 
 ```C++
 vector< vector<string> > v;
@@ -56,8 +107,18 @@ We have three types of objects
 
 --- 
 
+We have also added precedence functionality, so we have each object of 
+parenthesis as a type of connector as well.
+
+---
+1. Psemicolon
+2. Por
+3. Pand
+---
+
+
 We then created a vector of Connectors object pointers in order to store
-each new object of the three different classes we create. 
+each new object of the six different classes we create. 
 
 ```C++
 vector<Connectors*> objects;
@@ -65,10 +126,28 @@ vector<Connectors*> objects;
 objects.push_back(new Semicolon(current));
 objects.push_back(new Or(current));
 objects.push_back(new And(current));
+objects.push_back(new Psemicolon(current));
+objects.push_back(new Por(current));
+objects.push_back(new Pand(current));
+
 ```
 
 We then iterate through our objects vector so that we can call run on
 each type of object.
+
+Parenthesis objects will pass in a queue and 2D vector of all of it's
+commands into it's constructor so that the run function may be 
+called within it. This way, all the commands inside the () will
+run in a single chunk. We then use a helper function to return
+the success or failure of the entire () unit.
+
+```C++
+int parenthesisState(vector<int> v, bool b)
+{
+    int totalState = v.at(v.size() -1);
+    return totalState;
+}
+```
 
 Each of our run functions checks the specific state needed to run
 as well as checks for the exit call.
@@ -82,15 +161,19 @@ c_pid = fork();
 execvp(pointer[0], pointer);
 ```
 
- Depending on execvp()
+Depending on execvp()
 succeeding or failing, we can set the new bool state and return to run
 the next object's run. 
 
----
-> Design
+With Test, in run, we check the flag and using the stat struct, call
+the function with a passed in path. The flags use a macro to check
+themselves.
 
-
----
+```C++
+stat(pointer[2], &fileS);
+return S_ISREG(fileS.st_mode);
+return S_ISDIR(fileS.st_mode);
+```
 
 > Known Bugs
 
@@ -102,7 +185,9 @@ the next object's run.
 3. In script, if you use backspace, the resulting code will sometimes show random
     letters in the commands. 
 4. There is a possibility that getlogin() and gethostname() may fail. 
-
+5. If no matching parenthesis is given in a call, the program will just return 
+    and wait for more input.
+6. If no matching quote is found, echo will accept everything as input.
 ---
 
 > Fixed Bugs
@@ -124,7 +209,6 @@ the next object's run.
     garbage values, even within the same function. To fix this, we stored
     our values in a vector<char *> v. This also allowed us to create a 
     pointer to it which could be passed into execvp() to run correctly.  
-
 
 
  

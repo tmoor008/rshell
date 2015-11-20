@@ -1,0 +1,165 @@
+Script started on Fri 20 Nov 2015 11:17:49 AM PST
+[tmoor008@hammer src]$ ./a.out
+tmoor008@hammer.cs.ucr.edu$ (echo hi)
+hi
+tmoor008@hammer.cs.ucr.edu$ (echo hello && ls)
+hello
+a.out  orig.cc	rshell.cc  test.script
+tmoor008@hammer.cs.ucr.edu$ (echo my || ls)
+my
+tmoor008@hammer.cs.ucr.edu$ (ls -a; echo cats)
+.  ..  a.out  orig.cc  rshell.cc  test.script
+cats
+tmoor008@hammer.cs.ucr.edu$ (loop && echo m)
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ (echo m && loop)
+m
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ (loop || ls)
+execvp failed: No such file or directory
+a.out  orig.cc	rshell.cc  test.script
+tmoor008@hammer.cs.ucr.edu$ (ls || mosm)
+a.out  orig.cc	rshell.cc  test.script
+tmoor008@hammer.cs.ucr.edu$ (eco; ls -a; mdo)
+execvp failed: No such file or directory
+.  ..  a.out  orig.cc  rshell.cc  test.script
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ (echo m) && (echo l)
+m
+l
+tmoor008@hammer.cs.ucr.edu$ (echo m) || (echo k)
+m
+tmoor008@hammer.cs.ucr.edu$ (echo kk); (echo mine)
+kk
+mine
+tmoor008@hammer.cs.ucr.edu$ (echo its && echo my) && echo birthday
+its
+my
+birthday
+tmoor008@hammer.cs.ucr.edu$ (cal || date; echo time)
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+time
+tmoor008@hammer.cs.ucr.edu$ (mkdir hello || touch goodbye) || echo fail
+tmoor008@hammer.cs.ucr.edu$ (ls && echo files) || echo no
+a.out  hello  orig.cc  rshell.cc  test.script
+files
+tmoor008@hammer.cs.ucr.edu$ (rm -r hello || echo cant && ls) && echo good
+a.out  orig.cc	rshell.cc  test.script
+good
+tmoor008@hammer.cs.ucr.edu$ echo test && (echo cat || echo dog; ls -a && date)
+test
+cat
+.  ..  a.out  orig.cc  rshell.cc  test.script
+Fri Nov 20 11:22:02 PST 2015
+tmoor008@hammer.cs.ucr.edu$ mkdir yes && (touch mass || echo no && ls; cal) && ls
+a.out  mass  orig.cc  rshell.cc	 test.script  yes
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+a.out  mass  orig.cc  rshell.cc	 test.script  yes
+tmoor008@hammer.cs.ucr.edu$ (rm -r mass && rm -r yes || echo cantrremove) && ls
+a.out  orig.cc	rshell.cc  test.script
+tmoor008@hammer.cs.ucr.edu$ (loop && ls) && ls
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ (echo catz || ls && loop) && ls
+catz
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ (loop && mkdir yellow || mos) || echo failed
+execvp failed: No such file or directory
+execvp failed: No such file or directory
+failed
+tmoor008@hammer.cs.ucr.edu$ ls && (echo make && cal || date && touch green) && ls -a
+a.out  orig.cc	rshell.cc  test.script
+make
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+.  ..  a.out  green  orig.cc  rshell.cc	 test.script
+tmoor008@hammer.cs.ucr.edu$ rm -r green && (echo yes || echo no) && loop
+yes
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ echo go && (echo moo && fool) && ls
+go
+moo
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ echo cat && (cal || cal && date || echo messy && ls -a) && ls || (echo no && cal) && (echo yes || date && ls -a) || echo fail
+cat
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+Fri Nov 20 11:30:14 PST 2015
+.  ..  a.out  orig.cc  rshell.cc  test.script
+a.out  orig.cc	rshell.cc  test.script
+yes
+.  ..  a.out  orig.cc  rshell.cc  test.script
+tmoor008@hammer.cs.ucr.edu$ ls && (cal; echo yes; echo my && echo name) || echo no && ls; (echo cats && date)
+a.out  orig.cc	rshell.cc  test.script
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+yes
+my
+name
+a.out  orig.cc	rshell.cc  test.script
+cats
+Fri Nov 20 11:31:44 PST 2015
+tmoor008@hammer.cs.ucr.edu$ (echo mane && ls); echo can
+mane
+a.out  orig.cc	rshell.cc  test.script
+can
+tmoor008@hammer.cs.ucr.edu$ echo hello; (echo mice || echo cats && date) || echo fail && (mkdir mine && rm -r mine)
+hello
+mice
+Fri Nov 20 11:33:17 PST 2015
+tmoor008@hammer.cs.ucr.edu$ (ls || echo hi) || echo no && loop || (echo hello && date || cal && loop) && ls
+a.out  orig.cc	rshell.cc  test.script
+execvp failed: No such file or directory
+hello
+Fri Nov 20 11:33:41 PST 2015
+execvp failed: No such file or directory
+tmoor008@hammer.cs.ucr.edu$ echo hi; (echo mg && ls; date && cal) || date; (echo yes || echo cats)
+hi
+mg
+a.out  orig.cc	rshell.cc  test.script
+Fri Nov 20 11:34:21 PST 2015
+    November 2015
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5	6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+
+yes
+tmoor008@hammer.cs.ucr.edu$ exit
+[tmoor008@hammer src]$ exit
+exit
+
+Script done on Fri 20 Nov 2015 11:35:51 AM PST

@@ -35,7 +35,7 @@ class Semicolon : public Connectors
     public:
     Semicolon(vector<string> v) : vctr(50)  //constructor creates char* vector
     {                                       //which stores one command+params
-        vctr.reserve(v.size());             //in a semicolon object
+        vctr.resize(v.size());             //in a semicolon object
         for (unsigned i = 0; i < v.size(); ++i)
         {
             vctr[i] = const_cast<char*>(v[i].c_str());
@@ -157,7 +157,7 @@ class And : public Connectors
     public:
     And(vector<string> v) : vctr(50)
     {       
-        vctr.reserve(v.size()); //store one command+param of type And
+        vctr.resize(v.size()); //store one command+param of type And
         for (unsigned i = 0; i < v.size(); ++i)
         {
             vctr[i] = const_cast<char*>(v[i].c_str());
@@ -285,7 +285,7 @@ class Or : public Connectors
     public:
     Or(vector<string> v) : vctr(50) //stores one command+params of type Or
     {       
-        vctr.reserve(v.size());
+        vctr.resize(v.size());
         for (unsigned i = 0; i < v.size(); ++i)
         {
             vctr[i] = const_cast<char*>(v[i].c_str());
@@ -752,7 +752,7 @@ int main()
         vector<Connectors*> objects;
         queue<string> q;        
         
-        int column = 0;
+        unsigned column = 0;
         
         //creates tokenizer and char separator to parse input
         typedef tokenizer<char_separator<char> > tokenizer; 
@@ -817,6 +817,10 @@ int main()
                         cout << "cannot have multiple semicolons" << endl;
                         wrong = 1;
                         break;
+                    }
+                    if (*temp == ")")
+                    {
+                        continue;
                     }
                 }
                 q.push(*itr);
