@@ -19,7 +19,9 @@ the next connector. We have also added the test command which will test a path
 of a given file. Both test and it's operators [] are functional. 
 
 ---
+
 > Design
+
 ---
 Our code prints a command prompt which reads in a line of commands and 
 connectors. We then parse the input line using a tokenizer. We use the tokenizer
@@ -71,6 +73,7 @@ else if (*itr == "\"")
     }
 }
 ```
+
 We also check for quotes here. To deal with quotes, we check for the first
 quote, and then set two flags (quotes and endquotes)  so that everything up until the second quote is
 pushed into the same column.
@@ -114,6 +117,7 @@ parenthesis as a type of connector as well.
 1. Psemicolon
 2. Por
 3. Pand
+
 ---
 
 
@@ -188,6 +192,7 @@ return S_ISDIR(fileS.st_mode);
 5. If no matching parenthesis is given in a call, the program will just return 
     and wait for more input.
 6. If no matching quote is found, echo will accept everything as input.
+
 ---
 
 > Fixed Bugs
