@@ -69,6 +69,10 @@ class Semicolon : public Connectors
             string e = "-e";
             string f = "-f";
             string d = "-d";
+            if (vctr.size() == 2) // if only "test" is entered
+            {
+                return 0;
+            }
             p = pointer[1];
             if (p == e)
             {
@@ -197,6 +201,10 @@ class And : public Connectors
             string e = "-e";
             string f = "-f";
             string d = "-d";
+            if (vctr.size() == 2) // if only "test" is entered
+            {
+                return 0;
+            }
             p = pointer[1];
             if (p == e)
             {
@@ -324,6 +332,10 @@ class Or : public Connectors
             string e = "-e";
             string f = "-f";
             string d = "-d";
+            if (vctr.size() == 2) // if only "test" is entered
+            {
+                return 0;
+            }
             p = pointer[1];
             if (p == e)
             {
